@@ -4,13 +4,38 @@ import viteLogo from "/vite.svg";
 import TopNav from "./components/TopNav";
 import LoginBoxes from "./components/LoginBoxes";
 import MultipleLogin from "./pages/MultipleLogin";
-function App() {
-  const [count, setCount] = useState(0);
+import Login from "./pages/Login";
+import { Route, BrowserRouter as Router, Routes } from "react-router-dom";
 
+function App() {
   return (
     <>
       <TopNav />
-      <MultipleLogin />
+      <Router>
+        <Routes>
+          <Route path="/" element={<MultipleLogin />} />
+          <Route
+            path="/login/assembly"
+            element={<Login title={"Assembly"} />}
+          />
+          <Route
+            path="/login/calibration"
+            element={<Login title={"Calibration"} />}
+          />
+          <Route
+            path="/login/post-calibration"
+            element={<Login title={"Post Calibration"} />}
+          />
+          <Route
+            path="/login/detector-testing"
+            element={<Login title={"Detector Testing"} />}
+          />
+          <Route
+            path="/login/rejection-rma"
+            element={<Login title={"Rejection & RMA"} />}
+          />
+        </Routes>
+      </Router>
     </>
   );
 }
