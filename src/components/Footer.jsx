@@ -4,7 +4,7 @@ const Footer = () => {
   return (
     <footer className="fixed bottom-0 w-full bg-gray-800 text-white py-2 flex items-center border-t border-gray-600">
       <div className="form-group ml-4">
-        {/* Your form group content */}
+       
         <p></p>
       </div>
       <div className="flex-grow"></div>
