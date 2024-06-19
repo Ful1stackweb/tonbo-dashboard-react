@@ -38,6 +38,7 @@ function App() {
             element={<Login title={"Rejection & RMA"} />}
           />
           <Route path="/assembly-dashboard" element={<AssemblyDashboard />} />
+          
         </Routes>
       </Router>
       <Footer />
