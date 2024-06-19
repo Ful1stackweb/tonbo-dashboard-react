@@ -7,6 +7,8 @@ import MultipleLogin from "./pages/MultipleLogin";
 import Login from "./pages/Login";
 import { Route, BrowserRouter as Router, Routes } from "react-router-dom";
 import Footer from "./components/Footer";
+import AssemblyDashboard from "./pages/AssemblyDashboard";
+import NewAssembledDetector from "./sections/Assembly/NewAssembledDetector";
 
 function App() {
   return (
@@ -35,6 +37,7 @@ function App() {
             path="/login/rejection-rma"
             element={<Login title={"Rejection & RMA"} />}
           />
+          <Route path="/assembly-dashboard" element={<AssemblyDashboard />} />
         </Routes>
       </Router>
       <Footer />
