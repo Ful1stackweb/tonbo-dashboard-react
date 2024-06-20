@@ -1,19 +1,40 @@
-import React from "react";
-
+import React, { useState } from "react";
+import { useNavigate } from "react-router-dom";
+import { useAuth } from "../../backend/firebase/AuthContect";
 const Login = ({ title, link }) => {
+  const [error, setError] = useState("");
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+
+  const navigate = useNavigate();
+  const { signin } = useAuth();
+
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    try {
+      setError("");
+      await signin(email, password);
+      navigate("/assembly-dashboard");
+    } catch (error) {
+      console.log(error);
+      setError("Failed to login");
+    }
+  };
+
   return (
     <div className="flex items-start justify-center min-h-screen">
       <div className="bg-white p-5 rounded-xl border shadow-lg max-w-md w-full mt-16">
         <h2 className="text-2xl font-medium mb-4 text-center text-[#dc3545]">
           {title} Login
         </h2>
-        <form>
+        <form onSubmit={(e) => handleSubmit(e)}>
           <div className="mb-4">
             <input
               type="email"
               id="email"
               className="w-full px-3 py-1 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
               placeholder="Email"
+              onChange={(e) => setEmail(e.target.value)}
               required
             />
           </div>
@@ -23,6 +44,7 @@ const Login = ({ title, link }) => {
               id="password"
               className="w-full px-3 py-1 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
               placeholder="Password"
+              onChange={(e) => setPassword(e.target.value)}
               required
             />
           </div>
