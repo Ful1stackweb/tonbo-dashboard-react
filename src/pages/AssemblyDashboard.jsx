@@ -19,7 +19,7 @@ const AssemblyDashboard = () => {
         {/* <NewAssembledDetector/> */}
         {/* <InspectAndSensitivityTest /> */}
         {/* <SensorReplacement/> */}
-        {/* <DustSensor /> */}
+        <DustSensor />
         {/* <DateWiseAssembled/> */}
          {/* <Update/> */}
         {/* <TonboDetector/> */}
