@@ -41,7 +41,7 @@ function App() {
               element={<Login title={"Rejection & RMA"} />}
             />
             <Route
-              path="/assembly-dashboard"
+              path="/assembly-dashboard/*"
               element={
                 <PrivateRoute>
                   <AssemblyDashboard />

@@ -1,4 +1,5 @@
-import React, { useState } from "react";
+import React from "react";
+import { Link } from "react-router-dom";
 
 const SideMenu = () => {
   return (
@@ -9,52 +10,52 @@ const SideMenu = () => {
         </h2>
         <span className="mb-5">TI Detector</span>
         <ul className="text-black mb-5">
-          <a href="">
+          <Link to="new-assembled-detector">
             <li className="text-[16px] text-[#78c987] mb-2 mt-2">
               New Assembled Detector
             </li>
-          </a>
-          <a href="">
+          </Link>
+          <Link to="inspect-sensitivity">
             <li className="text-[16px] text-[#78c987]">
               Inspect & Sensitivity Test
             </li>
-          </a>
+          </Link>
         </ul>
         <span className="mb-5">Assembled History</span>
         <ul className="text-black mb-5">
-          <a href="">
+          <Link to="sensor-replacement">
             <li className="text-[16px] text-[#78c987] mb-2 mt-2">
               Sensor Replacement
             </li>
-          </a>
-          <a href="">
+          </Link>
+          <Link to="dust-sensor">
             <li className="text-[16px] text-[#78c987]">Dust Sensor</li>
-          </a>
+          </Link>
         </ul>
         <span className="mb-5">Rejections</span>
         <ul className="text-black mb-5">
-          <a href="">
+          <Link to="date-wise-assembled">
             <li className="text-[16px] text-[#78c987] mb-2 mt-2">
               Date-wise Assembled
             </li>
-          </a>
-          <a href="">
+          </Link>
+          <Link to="overall-assembled">
             <li className="text-[16px] text-[#78c987]">Overall Assembled</li>
-          </a>
+          </Link>
         </ul>
         <span className="mb-5">ODDO Status</span>
         <ul className="text-black mb-5">
-          <a href="">
+          <Link to="update">
             <li className="text-[16px] text-[#78c987] mb-2 mt-2">Update</li>
-          </a>
+          </Link>
         </ul>
         <span className="mb-5">Detector History</span>
         <ul className="text-black ">
-          <a href="">
+          <Link to="tonbo-detector">
             <li className="text-[16px] text-[#78c987] mb-2 mt-2">
               Tonbo Detector
             </li>
-          </a>
+          </Link>
         </ul>
       </div>
     </div>

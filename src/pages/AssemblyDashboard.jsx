@@ -8,23 +8,31 @@ import DateWiseAssembled from "../sections/Assembly/DateWiseAssembled";
 import OverallAssembled from "../sections/Assembly/OverallAssembled";
 import Update from "../sections/Assembly/Update";
 import TonboDetector from "../sections/Assembly/TonboDetector";
+import { Route, Routes } from "react-router-dom";
+
 const AssemblyDashboard = () => {
   return (
     <div className="flex">
       <div>
         <SideMenu />
       </div>
-      <div>
-        {/* path=/assembly-dashboard */}
-        {/* <NewAssembledDetector/> */}
-        {/* <InspectAndSensitivityTest /> */}
-        {/* <SensorReplacement/> */}
-        <DustSensor />
-        {/* <DateWiseAssembled/> */}
-         {/* <Update/> */}
-        {/* <TonboDetector/> */}
-       
-
+      <div className="w-3/4 p-4">
+        <Routes>
+          <Route
+            path="new-assembled-detector"
+            element={<NewAssembledDetector />}
+          />
+          <Route
+            path="inspect-sensitivity"
+            element={<InspectAndSensitivityTest />}
+          />
+          <Route path="sensor-replacement" element={<SensorReplacement />} />
+          <Route path="dust-sensor" element={<DustSensor />} />
+          <Route path="date-wise-assembled" element={<DateWiseAssembled />} />
+          <Route path="overall-assembled" element={<OverallAssembled />} />
+          <Route path="update" element={<Update />} />
+          <Route path="tonbo-detector" element={<TonboDetector />} />
+        </Routes>
       </div>
     </div>
   );
