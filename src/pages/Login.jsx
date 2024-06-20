@@ -1,25 +1,23 @@
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { useAuth } from "../../backend/firebase/AuthContect";
-const Login = ({ title, link }) => {
+const Login = ({ title }) => {
   const [error, setError] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
 
-  const navigate = useNavigate();
+  // const navigate = useNavigate();
   const { signin } = useAuth();
 
-  const handleSubmit = async (e) => {
+  async function handleSubmit(e) {
     e.preventDefault();
     try {
       setError("");
       await signin(email, password);
-      navigate("/assembly-dashboard");
     } catch (error) {
-      console.log(error);
       setError("Failed to login");
     }
-  };
+  }
 
   return (
     <div className="flex items-start justify-center min-h-screen">
@@ -27,7 +25,9 @@ const Login = ({ title, link }) => {
         <h2 className="text-2xl font-medium mb-4 text-center text-[#dc3545]">
           {title} Login
         </h2>
-        <form onSubmit={(e) => handleSubmit(e)}>
+
+        <form onSubmit={handleSubmit}>
+          {error && <p className="text-red-600 lg:mt-8 text-center">{error}</p>}
           <div className="mb-4">
             <input
               type="email"
