@@ -22,7 +22,7 @@ const TopNav = () => {
       </a>
 
       <h1 className="text-white text-3xl font-medium">
-        TI Sensor Data & Tracking
+        TI Detector Data & Tracking
       </h1>
 
       {currentUser ? (
