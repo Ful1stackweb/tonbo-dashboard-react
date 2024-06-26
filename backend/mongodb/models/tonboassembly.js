@@ -28,6 +28,10 @@ const tonboAssemblySchema = new mongoose.Schema(
       type: String,
       required: true,
     },
+    creationDate: {
+      type: String,
+      required: true,
+    },
   },
   {
     timestamps: true,

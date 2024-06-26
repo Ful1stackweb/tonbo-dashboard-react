@@ -16,7 +16,7 @@ const TopNav = () => {
   };
 
   return (
-    <div className="flex justify-between items-center bg-[#007bff] p-2">
+    <div className="flex top-0 sticky justify-between items-center bg-[#007bff] p-2">
       <a href="/">
         <img src="/Tonbologo.png" alt="tonbo-logo" className="h-12" />
       </a>

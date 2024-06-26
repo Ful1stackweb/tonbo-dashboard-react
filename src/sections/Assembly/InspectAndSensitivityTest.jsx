@@ -1,8 +1,9 @@
 import axios from "axios";
-import React, { useEffect, useState } from "react";
+import Multiselect from "multiselect-react-dropdown";
+import React, { useEffect, useMemo, useState } from "react";
 
 const InspectAndSensitivityTest = () => {
-  const [searchTerm, setSearchTerm] = useState("");
+  const [selectedTonboSlNos, setSelectedTonboSlNos] = useState([]);
   const [formData, setFormData] = useState({
     date: "",
     whoTestedSensor: "",
@@ -10,6 +11,41 @@ const InspectAndSensitivityTest = () => {
     searchSLNo: "",
   });
   const [data, setData] = useState([]);
+  const [filteredData, setFilteredData] = useState([]);
+
+  useEffect(() => {
+    getAllSLNo();
+  }, []);
+
+  useEffect(() => {
+    const filtered = data.filter((item) => {
+      const matchesSensorType = item.sensorType
+        .toString()
+        .toLowerCase()
+        .includes(formData.sensorType.toLowerCase());
+      const matchesDate = item.createdAt.includes(formData.date);
+
+      const matchesSelectedTonboSlNos =
+        selectedTonboSlNos.length === 0 ||
+        selectedTonboSlNos.some(
+          (selected) => selected.tonboSlNo === item.tonboSlNo
+        );
+
+      return matchesSensorType && matchesDate && matchesSelectedTonboSlNos;
+    });
+
+    setFilteredData(filtered);
+  }, [data, formData, selectedTonboSlNos]);
+
+  const getAllSLNo = async () => {
+    try {
+      const response = await axios.get("http://localhost:3000/api/assembly");
+      setData(response.data);
+    } catch (error) {
+      console.error("Error fetching data:", error);
+      // Handle error (e.g., show a message to the user)
+    }
+  };
 
   const handleInputChange = (e) => {
     const { name, value } = e.target;
@@ -19,77 +55,26 @@ const InspectAndSensitivityTest = () => {
     });
   };
 
-  const updateStatusCount = (e) => {
-    const selectElement = e.target;
-    const passCountElement = document.getElementById("pass-count");
-    const failCountElement = document.getElementById("fail-count");
-
-    let passCount = parseInt(passCountElement.textContent.split("-")[1], 10);
-    let failCount = parseInt(failCountElement.textContent.split("-")[1], 10);
-
-    const previousStatus = selectElement.getAttribute("data-previous-status");
-    const newStatus = selectElement.value;
-
-    if (previousStatus === "pass") {
-      passCount--;
-    } else if (previousStatus === "fail") {
-      failCount--;
-    }
-
-    if (newStatus === "pass") {
-      passCount++;
-    } else if (newStatus === "fail") {
-      failCount++;
-    }
-
-    passCountElement.textContent = "P-" + passCount;
-    failCountElement.textContent = "F-" + failCount;
-
-    selectElement.setAttribute("data-previous-status", newStatus);
+  const handleSelect = (selectedList) => {
+    setSelectedTonboSlNos(selectedList);
   };
 
-  const searchTable = () => {
-    const input = searchTerm.toUpperCase();
-    const table = document.querySelector(".table tbody");
-    const rows = table.getElementsByTagName("tr");
-
-    for (let i = 0; i < rows.length; i++) {
-      const td = rows[i].getElementsByTagName("td")[1];
-      if (td) {
-        const txtValue = td.textContent || td.innerText;
-        if (txtValue.toUpperCase().indexOf(input) > -1) {
-          rows[i].style.display = "";
-        } else {
-          rows[i].style.display = "none";
-        }
-      }
-    }
-  };
-
-  const getAllSLNo = async () => {
-    try {
-      const response = await axios.get("http://localhost:3000/api/assembly");
-      setData(response.data);
-    } catch (error) {
-      console.error("Error :" + error);
-    }
-  };
-
-  useEffect(() => {
-    getAllSLNo();
-  }, []);
+  const options = useMemo(
+    () => data.map((item) => ({ tonboSlNo: item.tonboSlNo })),
+    [data]
+  );
 
   return (
     <div
       id="data2"
-      style={{ width: "1200px" }}
       className="p-4 bg-gray-100 mx-auto"
+      style={{ width: "1200px" }}
     >
       <h2 className="text-2xl font-bold mb-4 text-center">
         Inspect & Sensitivity Test
       </h2>
       <div className="container mx-auto bg-white p-6 rounded-lg shadow-lg">
-        <form>
+        <div>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             <div className="form-group">
               <label
@@ -146,8 +131,8 @@ const InspectAndSensitivityTest = () => {
               style={{ width: "280px" }}
             >
               <option value="">Select Sensor Type</option>
-              <option value="option1">Option 1</option>
-              <option value="option2">Option 2</option>
+              <option value="test">Option 1</option>
+              <option value="dust">Option 2</option>
               <option value="option3">Option 3</option>
             </select>
           </div>
@@ -159,30 +144,16 @@ const InspectAndSensitivityTest = () => {
               Search SL.No
             </label>
             <div className="relative flex justify-center">
-              <input
-                type="text"
-                id="searchSLNo"
-                name="searchSLNo"
-                className="form-control mt-1 border-2 border-gray-400 rounded-md pl-4 pr-10 h-10"
-                value={searchTerm}
-                onChange={(e) => setSearchTerm(e.target.value)}
-                onKeyUp={searchTable}
-                style={{ width: "300px" }}
+              <Multiselect
+                options={options}
+                displayValue="tonboSlNo"
+                selectedValues={selectedTonboSlNos}
+                onSelect={handleSelect}
+                onRemove={handleSelect}
               />
-              <span
-                className="absolute inset-y-0 flex items-center pr-3 cursor-pointer"
-                style={{ right: "411px" }}
-                onClick={searchTable}
-              >
-                <img
-                  src="/src/assets/search.png"
-                  alt="Search"
-                  className="h-5 w-5"
-                />
-              </span>
             </div>
           </div>
-        </form>
+        </div>
         <table className="table-auto w-full mt-6 border-collapse">
           <thead>
             <tr>
@@ -193,7 +164,7 @@ const InspectAndSensitivityTest = () => {
             </tr>
           </thead>
           <tbody>
-            {data.map((item) => (
+            {filteredData.map((item) => (
               <tr key={item._id}>
                 <td className="border text-center py-3 px-4">
                   <input type="checkbox" />
@@ -204,7 +175,6 @@ const InspectAndSensitivityTest = () => {
                 <td className="border text-center py-3 px-4">
                   <select
                     className="status-dropdown mt-1 block w-full border-gray-300 rounded-md shadow-sm"
-                    onChange={updateStatusCount}
                     data-previous-status=""
                   >
                     <option value="">Select</option>
