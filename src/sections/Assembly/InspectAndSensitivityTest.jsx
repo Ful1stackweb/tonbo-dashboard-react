@@ -1,4 +1,5 @@
-import React, { useState } from "react";
+import axios from "axios";
+import React, { useEffect, useState } from "react";
 
 const InspectAndSensitivityTest = () => {
   const [searchTerm, setSearchTerm] = useState("");
@@ -8,6 +9,7 @@ const InspectAndSensitivityTest = () => {
     sensorType: "",
     searchSLNo: "",
   });
+  const [data, setData] = useState([]);
 
   const handleInputChange = (e) => {
     const { name, value } = e.target;
@@ -64,14 +66,36 @@ const InspectAndSensitivityTest = () => {
     }
   };
 
+  const getAllSLNo = async () => {
+    try {
+      const response = await axios.get("http://localhost:3000/api/assembly");
+      setData(response.data);
+    } catch (error) {
+      console.error("Error :" + error);
+    }
+  };
+
+  useEffect(() => {
+    getAllSLNo();
+  }, []);
+
   return (
-    <div id="data2" style={{ width: '1200px' }} className="p-4 bg-gray-100 mx-auto">
-      <h2 className="text-2xl font-bold mb-4 text-center">Inspect & Sensitivity Test</h2>
-      <div style={{ height: '520px' }} className="container mx-auto bg-white p-6 rounded-lg shadow-lg">
+    <div
+      id="data2"
+      style={{ width: "1200px" }}
+      className="p-4 bg-gray-100 mx-auto"
+    >
+      <h2 className="text-2xl font-bold mb-4 text-center">
+        Inspect & Sensitivity Test
+      </h2>
+      <div className="container mx-auto bg-white p-6 rounded-lg shadow-lg">
         <form>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             <div className="form-group">
-              <label htmlFor="date" className="block text-orange-600 font-semibold">
+              <label
+                htmlFor="date"
+                className="block text-orange-600 font-semibold"
+              >
                 Date
               </label>
               <input
@@ -85,7 +109,10 @@ const InspectAndSensitivityTest = () => {
               />
             </div>
             <div className="form-group">
-              <label htmlFor="whoTestedSensor" className="block text-orange-600 font-semibold">
+              <label
+                htmlFor="whoTestedSensor"
+                className="block text-orange-600 font-semibold"
+              >
                 Who tested Sensor
               </label>
               <select
@@ -104,7 +131,10 @@ const InspectAndSensitivityTest = () => {
             </div>
           </div>
           <div className="form-group mt-4">
-            <label htmlFor="sensorType" className="block text-orange-600 font-semibold">
+            <label
+              htmlFor="sensorType"
+              className="block text-orange-600 font-semibold"
+            >
               Type of Sensor
             </label>
             <select
@@ -122,7 +152,10 @@ const InspectAndSensitivityTest = () => {
             </select>
           </div>
           <div className="form-group mt-4">
-            <label htmlFor="searchSLNo" className="block text-center text-orange-600 font-semibold">
+            <label
+              htmlFor="searchSLNo"
+              className="block text-center text-orange-600 font-semibold"
+            >
               Search SL.No
             </label>
             <div className="relative flex justify-center">
@@ -136,58 +169,84 @@ const InspectAndSensitivityTest = () => {
                 onKeyUp={searchTable}
                 style={{ width: "300px" }}
               />
-              <span className="absolute inset-y-0 flex items-center pr-3 cursor-pointer"
-              style={{ right: '411px' }}
-              onClick={searchTable}
+              <span
+                className="absolute inset-y-0 flex items-center pr-3 cursor-pointer"
+                style={{ right: "411px" }}
+                onClick={searchTable}
               >
-             <img src="/src/assets/search.png" alt="Search" className="h-5 w-5" />
+                <img
+                  src="/src/assets/search.png"
+                  alt="Search"
+                  className="h-5 w-5"
+                />
               </span>
-
-             
             </div>
           </div>
         </form>
-       <table className="table-auto w-full mt-6 border-collapse">
-  <thead>
-    <tr>
-      <th className="border py-2 px-4">Select</th>
-      <th className="border py-2 px-4">TI SL.No</th>
-      <th className="border py-2 px-4">Status</th>
-      <th className="border py-2 px-4">Sensitivity Check List</th>
-    </tr>
-  </thead>
-  <tbody>
-    <tr>
-      <td className="border text-center py-3 px-4">
-        <input type="checkbox" />
-      </td>
-      <td className="border text-center py-3 px-4">TUV-9008555</td>
-      <td className="border text-center py-3 px-4">
-  <select
-    className="status-dropdown mt-1 block w-full border-gray-300 rounded-md shadow-sm"
-    onChange={updateStatusCount}
-    data-previous-status=""
-  >
-    <option value="">Select</option>
-    <option value="pass" className="status-pass" style={{ color: "#047857",  backgroundColor: "#D1FAE5", }}>Pass</option>
-    <option value="fail" className="status-fail" style={{ color: "#B91C1C", backgroundColor: "#FEE2E2" }}>Fail</option>
-                </select>
-                
-</td>
-
-      <td className="border text-center py-3 px-4">
-        <div className="checklist flex flex-wrap justify-center">
-          <label className="mr-2"><input type="checkbox" /> criteria 1</label>
-          <label className="mr-2"><input type="checkbox" /> criteria 2</label>
-          <label className="mr-2"><input type="checkbox" /> criteria 3</label>
-          <label className="mr-2"><input type="checkbox" /> criteria 4</label>
-          <label className="mr-2"><input type="checkbox" /> criteria 5</label>
-        </div>
-      </td>
-    </tr>
-    {/* More rows can go here */}
-  </tbody>
-</table>
+        <table className="table-auto w-full mt-6 border-collapse">
+          <thead>
+            <tr>
+              <th className="border py-2 px-4">Select</th>
+              <th className="border py-2 px-4">TI SL.No</th>
+              <th className="border py-2 px-4">Status</th>
+              <th className="border py-2 px-4">Sensitivity Check List</th>
+            </tr>
+          </thead>
+          <tbody>
+            {data.map((item) => (
+              <tr key={item._id}>
+                <td className="border text-center py-3 px-4">
+                  <input type="checkbox" />
+                </td>
+                <td className="border text-center py-3 px-4">
+                  {item.tonboSlNo}
+                </td>
+                <td className="border text-center py-3 px-4">
+                  <select
+                    className="status-dropdown mt-1 block w-full border-gray-300 rounded-md shadow-sm"
+                    onChange={updateStatusCount}
+                    data-previous-status=""
+                  >
+                    <option value="">Select</option>
+                    <option
+                      value="pass"
+                      className="status-pass"
+                      style={{ color: "#047857", backgroundColor: "#D1FAE5" }}
+                    >
+                      Pass
+                    </option>
+                    <option
+                      value="fail"
+                      className="status-fail"
+                      style={{ color: "#B91C1C", backgroundColor: "#FEE2E2" }}
+                    >
+                      Fail
+                    </option>
+                  </select>
+                </td>
+                <td className="border text-center py-3 px-4">
+                  <div className="checklist flex flex-wrap justify-center">
+                    <label className="mr-2">
+                      <input type="checkbox" /> criteria 1
+                    </label>
+                    <label className="mr-2">
+                      <input type="checkbox" /> criteria 2
+                    </label>
+                    <label className="mr-2">
+                      <input type="checkbox" /> criteria 3
+                    </label>
+                    <label className="mr-2">
+                      <input type="checkbox" /> criteria 4
+                    </label>
+                    <label className="mr-2">
+                      <input type="checkbox" /> criteria 5
+                    </label>
+                  </div>
+                </td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
 
         <div className="footer flex justify-end mt-6">
           <button className="save-button bg-green-500 text-white py-2 px-4 rounded-md shadow-sm hover:bg-green-600">

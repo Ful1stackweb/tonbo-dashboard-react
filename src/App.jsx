@@ -1,16 +1,12 @@
-import { useState } from "react";
-import reactLogo from "./assets/react.svg";
-import viteLogo from "/vite.svg";
 import TopNav from "./components/TopNav";
-import LoginBoxes from "./components/LoginBoxes";
 import MultipleLogin from "./pages/MultipleLogin";
 import Login from "./pages/Login";
 import { Route, BrowserRouter as Router, Routes } from "react-router-dom";
 import Footer from "./components/Footer";
 import AssemblyDashboard from "./pages/AssemblyDashboard";
-import NewAssembledDetector from "./sections/Assembly/NewAssembledDetector";
 import { AuthProvider } from "../backend/firebase/AuthContect";
 import PrivateRoute from "../backend/firebase/PrivateRoute";
+import LoginRedirect from "../backend/firebase/LoginRedirect";
 
 function App() {
   return (
@@ -19,10 +15,22 @@ function App() {
         <AuthProvider>
           <TopNav />
           <Routes>
-            <Route path="/" element={<MultipleLogin />} />
+            <Route
+              path="/"
+              element={
+                <LoginRedirect>
+                  {" "}
+                  <MultipleLogin />{" "}
+                </LoginRedirect>
+              }
+            />
             <Route
               path="/login/assembly"
-              element={<Login title={"Assembly"} />}
+              element={
+                <LoginRedirect>
+                  <Login title={"Assembly"} />
+                </LoginRedirect>
+              }
             />
             <Route
               path="/login/calibration"
@@ -40,6 +48,7 @@ function App() {
               path="/login/rejection-rma"
               element={<Login title={"Rejection & RMA"} />}
             />
+
             <Route
               path="/assembly-dashboard/*"
               element={
