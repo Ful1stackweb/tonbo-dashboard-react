@@ -11,13 +11,14 @@ const NewAssembledDetector = () => {
     },
   ]);
   const [totalSerialCount, setTotalSerialCount] = useState(0);
-  const [savedRows, setSavedRows] = useState([]);
+  const [currentDate, setCurrentDate] = useState("");
 
   const [userId, setUserId] = useState("44");
   const [sensorType, setSensorType] = useState("Test");
 
   useEffect(() => {
     updateTotalSerialCount();
+    setCurrentDate(new Date().toISOString().substr(0, 10));
   }, [rows]);
 
   const updateTotalSerialCount = () => {
@@ -27,14 +28,6 @@ const NewAssembledDetector = () => {
 
   const handleInputChange = (index, field, value) => {
     const newRows = [...rows];
-
-    if (field === "tonboSlNo" && value.trim() === "") {
-      // Remove the row if the tonboSlNo is cleared
-      newRows.splice(index, 1);
-      setRows(newRows);
-      return;
-    }
-
     newRows[index][field] = value;
     setRows(newRows);
 
@@ -113,6 +106,14 @@ const NewAssembledDetector = () => {
     ]);
   };
 
+  const deleteRow = (index) => {
+    if (index !== 0) {
+      const newRows = [...rows];
+      newRows.splice(index, 1); // Remove the row at index
+      setRows(newRows);
+    }
+  };
+
   const saveData = async () => {
     try {
       const filledRows = rows.filter((row) => row.tonboSlNo.trim() !== "");
@@ -167,8 +168,8 @@ const NewAssembledDetector = () => {
       <h2 className="text-2xl mb-4">New Assembled Detector</h2>
       <div className="form-container bg-gray-100 p-6 rounded-lg shadow-md mx-auto w-4/5">
         <div className="row-container mb-4 flex justify-between items-center">
-          <div className="total-count bg-gray-200 p-2 rounded-full border-2 border-green-400 text-gray-700">
-            Total Serial Numbers:{" "}
+          <div className="total-count flex items-center bg-blue-200 p-2 rounded-full border-2 border-blue-400 text-gray-700 font-semibold shadow-lg">
+            <span className="mr-2">Total Serial Numbers:</span>
             <span id="total-serial-count">{totalSerialCount}</span>
           </div>
           <button
@@ -192,7 +193,9 @@ const NewAssembledDetector = () => {
                 type="date"
                 id="date"
                 name="date"
-                className="form-control w-full p-2 border border-gray-300 rounded-md shadow-inner"
+                className="form-control w-36 p-2 border border-gray-300 rounded-md shadow-inner"
+                value={currentDate}
+                onChange={(e) => setCurrentDate(e.target.value)}
               />
             </div>
             <div className="form-group flex-1 mx-2">
@@ -206,7 +209,6 @@ const NewAssembledDetector = () => {
                 name="sensor-type"
                 id="sensor-type"
                 className="form-control w-full p-2 border border-gray-300 rounded-md shadow-inner"
-                onChange={(e) => setSensorType(e.target.value)}
               >
                 <option value="">Select Sensor Type</option>
                 <option value="option1">Option 1</option>
@@ -225,7 +227,6 @@ const NewAssembledDetector = () => {
                 name="assembled-by"
                 id="assembled-by"
                 className="form-control w-full p-2 border border-gray-300 rounded-md shadow-inner"
-                onChange={(e) => setUserId(e.target.value)}
               >
                 <option value="">Select Assembler</option>
                 <option value="option1">Option 1</option>
@@ -235,14 +236,14 @@ const NewAssembledDetector = () => {
             </div>
           </div>
 
-          <div className="table-container overflow-y-auto max-h-96 mb-4">
+          <div className="table-container overflow-x-auto max-h-96 relative mb-4">
             <table
               id="my-table"
               className="table w-full border-collapse mt-1 text-center"
             >
               <thead>
                 <tr>
-                  <th className="border border-gray-400 bg-gray-200 text-blue-900 font-bold">
+                  <th className="border border-gray-400 bg-gray-200 text-blue-900 font-bold sticky left-0 z-10">
                     SL.no
                   </th>
                   <th className="border border-gray-400 bg-gray-200 text-blue-900 font-bold">
@@ -257,12 +258,17 @@ const NewAssembledDetector = () => {
                   <th className="border border-gray-400 bg-gray-200 text-blue-900 font-bold">
                     Power Board SL.no
                   </th>
+                  <th className="border border-gray-400 bg-gray-200 text-blue-900 font-bold">
+                    Actions
+                  </th>
                 </tr>
               </thead>
               <tbody>
                 {rows.map((row, index) => (
                   <tr key={index} id={`row-${index}`}>
-                    <td className="border border-gray-400">{index + 1}</td>
+                    <td className="border border-gray-400 sticky left-0 z-10">
+                      {index + 1}
+                    </td>
                     <td className="border border-gray-400">
                       <input
                         type="text"
@@ -330,6 +336,16 @@ const NewAssembledDetector = () => {
                         }
                         maxLength="5"
                       />
+                    </td>
+                    <td className="border border-gray-400">
+                      {index !== 0 && (
+                        <button
+                          className="delete-button bg-red-500 text-white py-1 px-2 rounded-full hover:bg-red-600 transition ease-in-out"
+                          onClick={() => deleteRow(index)}
+                        >
+                          Delete
+                        </button>
+                      )}
                     </td>
                   </tr>
                 ))}
