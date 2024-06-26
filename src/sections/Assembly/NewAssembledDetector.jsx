@@ -13,7 +13,6 @@ const NewAssembledDetector = () => {
   const [totalSerialCount, setTotalSerialCount] = useState(0);
   const [savedRows, setSavedRows] = useState([]);
 
-  //UserId and SensorType are hardcoded for now
   const [userId, setUserId] = useState("44");
   const [sensorType, setSensorType] = useState("Test");
 
@@ -28,19 +27,50 @@ const NewAssembledDetector = () => {
 
   const handleInputChange = (index, field, value) => {
     const newRows = [...rows];
+
+    if (field === "tonboSlNo" && value.trim() === "") {
+      // Remove the row if the tonboSlNo is cleared
+      newRows.splice(index, 1);
+      setRows(newRows);
+      return;
+    }
+
     newRows[index][field] = value;
     setRows(newRows);
 
     const isLastRow = index === rows.length - 1;
 
-    // If 'tonboSlNo' is filled in the last row, add a new row
-    if (field === "tonboSlNo" && value.trim() !== "" && isLastRow) {
-      addNewRow();
-    }
+    // Character limits for each field
+    const limits = {
+      tonboSlNo: 11,
+      sensorSlNo: 9,
+      proxyBoardSlNo: 11,
+      powerBoardSlNo: 5,
+    };
 
-    // If 'tonboSlNo' is emptied and it's not the last row, delete the row
-    if (field === "tonboSlNo" && value.trim() === "" && !isLastRow) {
-      deleteRow(index);
+    // Check if the input length has reached the limit
+    if (value.length === limits[field]) {
+      if (isLastRow) {
+        addNewRow();
+        setTimeout(() => {
+          const nextRow = document.getElementById(`row-${index + 1}`);
+          if (nextRow) {
+            const nextInput = nextRow.querySelector(
+              `input[name="${field}"]`
+            );
+            if (nextInput) {
+              nextInput.focus();
+            }
+          }
+        }, 0);
+      } else {
+        const nextInput = document.querySelector(
+          `#row-${index + 1} input[name="${field}"]`
+        );
+        if (nextInput) {
+          nextInput.focus();
+        }
+      }
     }
   };
 
@@ -53,21 +83,21 @@ const NewAssembledDetector = () => {
         addNewRow();
       }
 
-      // Focus the next row's first field
+      // Focus the next row's field
       if (isLastRow) {
         const nextRow = document.getElementById(`row-${index + 1}`);
         if (nextRow) {
-          const nextInput = nextRow.querySelector('input[name="tonboSlNo"]');
+          const nextInput = nextRow.querySelector(`input[name="${field}"]`);
           if (nextInput) {
             nextInput.focus();
           }
         }
       } else {
-        const nextField = document.querySelector(
+        const nextInput = document.querySelector(
           `#row-${index + 1} input[name="${field}"]`
         );
-        if (nextField) {
-          nextField.focus();
+        if (nextInput) {
+          nextInput.focus();
         }
       }
     }
@@ -83,12 +113,6 @@ const NewAssembledDetector = () => {
         powerBoardSlNo: "",
       },
     ]);
-  };
-
-  const deleteRow = (index) => {
-    const newRows = [...rows];
-    newRows.splice(index, 1); // Remove the row at index
-    setRows(newRows);
   };
 
   const saveData = async () => {
@@ -173,6 +197,7 @@ const NewAssembledDetector = () => {
                 name="sensor-type"
                 id="sensor-type"
                 className="form-control w-full p-2 border border-gray-300 rounded-md shadow-inner"
+                onChange={(e) => setSensorType(e.target.value)}
               >
                 <option value="">Select Sensor Type</option>
                 <option value="option1">Option 1</option>
@@ -191,6 +216,7 @@ const NewAssembledDetector = () => {
                 name="assembled-by"
                 id="assembled-by"
                 className="form-control w-full p-2 border border-gray-300 rounded-md shadow-inner"
+                onChange={(e) => setUserId(e.target.value)}
               >
                 <option value="">Select Assembler</option>
                 <option value="option1">Option 1</option>
@@ -200,7 +226,7 @@ const NewAssembledDetector = () => {
             </div>
           </div>
 
-          <div className="table-container overflow-y-auto relative mb-4">
+          <div className="table-container overflow-y-auto max-h-96 mb-4">
             <table
               id="my-table"
               className="table w-full border-collapse mt-1 text-center"
@@ -237,7 +263,10 @@ const NewAssembledDetector = () => {
                         onChange={(e) =>
                           handleInputChange(index, "tonboSlNo", e.target.value)
                         }
-                        onKeyDown={(e) => handleKeyPress(index, "tonboSlNo", e)}
+                        onKeyPress={(e) =>
+                          handleKeyPress(index, "tonboSlNo", e)
+                        }
+                        maxLength="11"
                       />
                     </td>
                     <td className="border border-gray-400">
@@ -249,9 +278,10 @@ const NewAssembledDetector = () => {
                         onChange={(e) =>
                           handleInputChange(index, "sensorSlNo", e.target.value)
                         }
-                        onKeyDown={(e) =>
+                        onKeyPress={(e) =>
                           handleKeyPress(index, "sensorSlNo", e)
                         }
+                        maxLength="9"
                       />
                     </td>
                     <td className="border border-gray-400">
@@ -261,15 +291,12 @@ const NewAssembledDetector = () => {
                         className="form-control w-11/12 p-1 border border-red-400 rounded-sm text-center m-auto block"
                         value={row.proxyBoardSlNo}
                         onChange={(e) =>
-                          handleInputChange(
-                            index,
-                            "proxyBoardSlNo",
-                            e.target.value
-                          )
+                          handleInputChange(index, "proxyBoardSlNo", e.target.value)
                         }
-                        onKeyDown={(e) =>
+                        onKeyPress={(e) =>
                           handleKeyPress(index, "proxyBoardSlNo", e)
                         }
+                        maxLength="11"
                       />
                     </td>
                     <td className="border border-gray-400">
@@ -279,15 +306,12 @@ const NewAssembledDetector = () => {
                         className="form-control w-11/12 p-1 border border-red-400 rounded-sm text-center m-auto block"
                         value={row.powerBoardSlNo}
                         onChange={(e) =>
-                          handleInputChange(
-                            index,
-                            "powerBoardSlNo",
-                            e.target.value
-                          )
+                          handleInputChange(index, "powerBoardSlNo", e.target.value)
                         }
-                        onKeyDown={(e) =>
+                        onKeyPress={(e) =>
                           handleKeyPress(index, "powerBoardSlNo", e)
                         }
+                        maxLength="5"
                       />
                     </td>
                   </tr>
