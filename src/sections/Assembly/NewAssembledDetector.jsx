@@ -47,6 +47,19 @@ const NewAssembledDetector = () => {
     newRows[index][field] = value;
     setRows(newRows);
     setUnsavedChanges(true); // Mark changes as unsaved
+
+    // Check if the input length has reached the limit
+    const limits = {
+      tonboSlNo: 11,
+      sensorSlNo: 9,
+      proxyBoardSlNo: 11,
+      powerBoardSlNo: 5,
+      fpgaBoardSlNo: 11,
+    };
+
+    if (value.length === limits[field]) {
+      addNewRow(); // Automatically add a new row
+    }
   };
 
   const handleKeyPress = (index, field, e) => {
@@ -237,7 +250,7 @@ const NewAssembledDetector = () => {
                     <td className="border border-gray-400 sticky left-0 z-10">
                       {index + 1}
                     </td>
-                    <td className="border border-gray-400">
+                    <td className="border-gray-400">
                       <input
                         type="text"
                         name="tonboSlNo"
@@ -346,3 +359,4 @@ const NewAssembledDetector = () => {
 };
 
 export default NewAssembledDetector;
+
