@@ -21,7 +21,7 @@ const SideMenu = () => {
             </li>
           </Link>
         </ul>
-        <span className="mb-5">Assembled History</span>
+        <span className="mb-5">Rejections</span>
         <ul className="text-black mb-5">
           <Link to="sensor-replacement">
             <li className="text-[16px] text-[#78c987] mb-2 mt-2">
@@ -32,13 +32,8 @@ const SideMenu = () => {
             <li className="text-[16px] text-[#78c987]">Dust Sensor</li>
           </Link>
         </ul>
-        <span className="mb-5">Rejections</span>
+        <span className="mb-5">Assembled History</span>
         <ul className="text-black mb-5">
-          <Link to="date-wise-assembled">
-            <li className="text-[16px] text-[#78c987] mb-2 mt-2">
-              Date-wise Assembled
-            </li>
-          </Link>
           <Link to="overall-assembled">
             <li className="text-[16px] text-[#78c987]">Overall Assembled</li>
           </Link>
