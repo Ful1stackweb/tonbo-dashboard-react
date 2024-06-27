@@ -12,6 +12,7 @@ const InspectAndSensitivityTest = () => {
   });
   const [data, setData] = useState([]);
   const [filteredData, setFilteredData] = useState([]);
+  const [selectAll, setSelectAll] = useState(false);
 
   useEffect(() => {
     getAllSLNo();
@@ -64,6 +65,62 @@ const InspectAndSensitivityTest = () => {
     [data]
   );
 
+  const handleSelectAll = () => {
+    const updatedFilteredData = filteredData.map((item) => ({
+      ...item,
+      selected: !selectAll,
+    }));
+    setFilteredData(updatedFilteredData);
+    setSelectAll(!selectAll);
+  };
+
+  const handleRowSelection = (index) => {
+    const updatedFilteredData = filteredData.map((item, i) =>
+      i === index ? { ...item, selected: !item.selected } : item
+    );
+    setFilteredData(updatedFilteredData);
+    if (!updatedFilteredData.every((item) => item.selected)) {
+      setSelectAll(false);
+    }
+  };
+
+  const handleStatusChange = (index, newStatus) => {
+  const updatedFilteredData = filteredData.map((item, i) =>
+    i === index
+      ? {
+          ...item,
+          status: newStatus,
+          criteria: newStatus === "pass"
+            ? [true, true, true, true, true]
+            : newStatus === "fail"
+            ? [false, false, false, false, false]
+            : item.criteria,
+        }
+      : item
+  );
+  setFilteredData(updatedFilteredData);
+};
+
+
+  const handleCriteriaChange = (rowIndex, criteriaIndex) => {
+    const updatedFilteredData = filteredData.map((item, i) =>
+      i === rowIndex
+        ? {
+            ...item,
+            criteria: item.criteria.map((checked, j) =>
+              j === criteriaIndex ? !checked : checked
+            ),
+            status: item.criteria.every((checked, j) =>
+              j === criteriaIndex ? !checked : checked
+            )
+              ? "pass"
+              : "fail",
+          }
+        : item
+    );
+    setFilteredData(updatedFilteredData);
+  };
+
   return (
     <div
       id="data2"
@@ -93,27 +150,6 @@ const InspectAndSensitivityTest = () => {
                 style={{ width: "280px" }}
               />
             </div>
-            <div className="form-group">
-              <label
-                htmlFor="whoTestedSensor"
-                className="block text-orange-600 font-semibold"
-              >
-                Who tested Sensor
-              </label>
-              <select
-                id="whoTestedSensor"
-                name="whoTestedSensor"
-                className="form-control mt-1 block border-2 border-gray-400 rounded-md h-10"
-                value={formData.whoTestedSensor}
-                onChange={handleInputChange}
-                style={{ width: "280px" }}
-              >
-                <option value="">Select</option>
-                <option value="option1">Option 1</option>
-                <option value="option2">Option 2</option>
-                <option value="option3">Option 3</option>
-              </select>
-            </div>
           </div>
           <div className="form-group mt-4">
             <label
@@ -131,9 +167,10 @@ const InspectAndSensitivityTest = () => {
               style={{ width: "280px" }}
             >
               <option value="">Select Sensor Type</option>
-              <option value="test">Option 1</option>
-              <option value="dust">Option 2</option>
-              <option value="option3">Option 3</option>
+              <option value="ATTO-Custom">ATTO-Custom</option>
+                <option value="ATTO-Panhead">ATTO-Panhead</option>
+                <option value="Athena-Spartan">Athena-Spartan</option>
+                <option value="Athena-BHD">Athena-BHD</option>
             </select>
           </div>
           <div className="form-group mt-4">
@@ -157,17 +194,29 @@ const InspectAndSensitivityTest = () => {
         <table className="table-auto w-full mt-6 border-collapse">
           <thead>
             <tr>
-              <th className="border py-2 px-4">Select</th>
+              <th className="border py-2 px-4">Select All 
+                <input
+                  type="checkbox"
+                  style={{ marginLeft: '10px' }}
+                  checked={selectAll}
+                  onChange={handleSelectAll}
+                />
+                
+              </th>
               <th className="border py-2 px-4">TI SL.No</th>
               <th className="border py-2 px-4">Status</th>
               <th className="border py-2 px-4">Sensitivity Check List</th>
             </tr>
           </thead>
           <tbody>
-            {filteredData.map((item) => (
+            {filteredData.map((item, rowIndex) => (
               <tr key={item._id}>
                 <td className="border text-center py-3 px-4">
-                  <input type="checkbox" />
+                  <input
+                    type="checkbox"
+                    checked={item.selected || false}
+                    onChange={() => handleRowSelection(rowIndex)}
+                  />
                 </td>
                 <td className="border text-center py-3 px-4">
                   {item.tonboSlNo}
@@ -175,7 +224,10 @@ const InspectAndSensitivityTest = () => {
                 <td className="border text-center py-3 px-4">
                   <select
                     className="status-dropdown mt-1 block w-full border-gray-300 rounded-md shadow-sm"
-                    data-previous-status=""
+                    value={item.status || ""}
+                    onChange={(e) =>
+                      handleStatusChange(rowIndex, e.target.value)
+                    }
                   >
                     <option value="">Select</option>
                     <option
@@ -194,23 +246,21 @@ const InspectAndSensitivityTest = () => {
                     </option>
                   </select>
                 </td>
+
                 <td className="border text-center py-3 px-4">
                   <div className="checklist flex flex-wrap justify-center">
-                    <label className="mr-2">
-                      <input type="checkbox" /> criteria 1
-                    </label>
-                    <label className="mr-2">
-                      <input type="checkbox" /> criteria 2
-                    </label>
-                    <label className="mr-2">
-                      <input type="checkbox" /> criteria 3
-                    </label>
-                    <label className="mr-2">
-                      <input type="checkbox" /> criteria 4
-                    </label>
-                    <label className="mr-2">
-                      <input type="checkbox" /> criteria 5
-                    </label>
+                    {Array.from({ length: 5 }).map((_, criteriaIndex) => (
+                      <label key={criteriaIndex} className="mr-2">
+                        <input
+                          type="checkbox"
+                          checked={item.criteria?.[criteriaIndex] || false}
+                          onChange={() =>
+                            handleCriteriaChange(rowIndex, criteriaIndex)
+                          }
+                        />{" "}
+                        criteria {criteriaIndex + 1}
+                      </label>
+                    ))}
                   </div>
                 </td>
               </tr>
