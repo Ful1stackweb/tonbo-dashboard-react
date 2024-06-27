@@ -166,7 +166,9 @@ const InspectAndSensitivityTest = () => {
               onChange={handleInputChange}
               style={{ width: "280px" }}
             >
-              <option value="">Select Sensor Type</option>
+             <option value="" disabled hidden>
+                  Select Sensor Type
+                </option>
               <option value="ATTO-Custom">ATTO-Custom</option>
                 <option value="ATTO-Panhead">ATTO-Panhead</option>
                 <option value="Athena-Spartan">Athena-Spartan</option>
