@@ -4,7 +4,6 @@ import NewAssembledDetector from "../sections/Assembly/NewAssembledDetector";
 import InspectAndSensitivityTest from "../sections/Assembly/InspectAndSensitivityTest";
 import SensorReplacement from "../sections/Assembly/SensorReplacement";
 import DustSensor from "../sections/Assembly/DustSensor";
-import DateWiseAssembled from "../sections/Assembly/DateWiseAssembled";
 import OverallAssembled from "../sections/Assembly/OverallAssembled";
 import Update from "../sections/Assembly/Update";
 import TonboDetector from "../sections/Assembly/TonboDetector";
@@ -28,7 +27,6 @@ const AssemblyDashboard = () => {
           />
           <Route path="sensor-replacement" element={<SensorReplacement />} />
           <Route path="dust-sensor" element={<DustSensor />} />
-          <Route path="date-wise-assembled" element={<DateWiseAssembled />} />
           <Route path="overall-assembled" element={<OverallAssembled />} />
           <Route path="update" element={<Update />} />
           <Route path="tonbo-detector" element={<TonboDetector />} />
