@@ -8,6 +8,7 @@ const NewAssembledDetector = () => {
       sensorSlNo: "",
       proxyBoardSlNo: "",
       powerBoardSlNo: "",
+      fpgaBoardSlNo: "",
     },
   ]);
   const [totalSerialCount, setTotalSerialCount] = useState(0);
@@ -39,6 +40,7 @@ const NewAssembledDetector = () => {
       sensorSlNo: 9,
       proxyBoardSlNo: 11,
       powerBoardSlNo: 5,
+      fpgaBoardSlNo: 5,
     };
 
     // Check if the input length has reached the limit
@@ -70,7 +72,7 @@ const NewAssembledDetector = () => {
       e.preventDefault();
       const isLastRow = index === rows.length - 1;
 
-      if (isLastRow && field === "powerBoardSlNo") {
+      if (isLastRow && field === "fpgaBoardSlNo") {
         addNewRow();
       }
 
@@ -102,6 +104,7 @@ const NewAssembledDetector = () => {
         sensorSlNo: "",
         proxyBoardSlNo: "",
         powerBoardSlNo: "",
+        fpgaBoardSlNo: "",
       },
     ]);
   };
@@ -139,6 +142,7 @@ const NewAssembledDetector = () => {
           sensorSlNo: filledRows[i].sensorSlNo,
           proxyBoardSlNo: filledRows[i].proxyBoardSlNo,
           powerBoardSlNo: filledRows[i].powerBoardSlNo,
+          fpgaBoardSlNo: filledRows[i].fpgaBoardSlNo,
           sensorType: sensorType,
           userId: userId,
           creationDate: formattedDate,
@@ -156,6 +160,7 @@ const NewAssembledDetector = () => {
           sensorSlNo: "",
           proxyBoardSlNo: "",
           powerBoardSlNo: "",
+          fpgaBoardSlNo: "",
         },
       ]);
     } catch (error) {
@@ -211,27 +216,10 @@ const NewAssembledDetector = () => {
                 className="form-control w-full p-2 border border-gray-300 rounded-md shadow-inner"
               >
                 <option value="">Select Sensor Type</option>
-                <option value="option1">Option 1</option>
-                <option value="option2">Option 2</option>
-                <option value="option3">Option 3</option>
-              </select>
-            </div>
-            <div className="form-group flex-1 mx-2">
-              <label
-                htmlFor="assembled-by"
-                className="block font-bold mb-1 text-orange-600"
-              >
-                Who Assembled Detectors
-              </label>
-              <select
-                name="assembled-by"
-                id="assembled-by"
-                className="form-control w-full p-2 border border-gray-300 rounded-md shadow-inner"
-              >
-                <option value="">Select Assembler</option>
-                <option value="option1">Option 1</option>
-                <option value="option2">Option 2</option>
-                <option value="option3">Option 3</option>
+                <option value="option1">ATTO-Custom</option>
+                <option value="option2">ATTO-Panhead</option>
+                <option value="option3">Athena-Spartan</option>
+                <option value="option4">Athena-BHD</option>
               </select>
             </div>
           </div>
@@ -257,6 +245,9 @@ const NewAssembledDetector = () => {
                   </th>
                   <th className="border border-gray-400 bg-gray-200 text-blue-900 font-bold">
                     Power Board SL.no
+                  </th>
+                  <th className="border border-gray-400 bg-gray-200 text-blue-900 font-bold">
+                    FPGA Board SL.no
                   </th>
                   <th className="border border-gray-400 bg-gray-200 text-blue-900 font-bold">
                     Actions
@@ -335,6 +326,25 @@ const NewAssembledDetector = () => {
                           handleKeyPress(index, "powerBoardSlNo", e)
                         }
                         maxLength="5"
+                      />
+                    </td>
+                    <td className="border border-gray-400">
+                      <input
+                        type="text"
+                        name="fpgaBoardSlNo"
+                        className="form-control w-11/12 p-1 border border-red-400 rounded-sm text-center m-auto block"
+                        value={row.fpgaBoardSlNo}
+                        onChange={(e) =>
+                          handleInputChange(
+                            index,
+                            "fpgaBoardSlNo",
+                            e.target.value
+                          )
+                        }
+                        onKeyPress={(e) =>
+                          handleKeyPress(index, "fpgaBoardSlNo", e)
+                        }
+                        maxLength="11"
                       />
                     </td>
                     <td className="border border-gray-400">
