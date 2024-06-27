@@ -2,6 +2,7 @@ const express = require("express");
 const mongoose = require("mongoose");
 const assemblymodel = require("./models/tonboassembly.js");
 const assemblyRoute = require("./routes/assembly.route.js");
+const userLoginAssemblyRoute = require("./routes/LoginAssembly.route.js");
 const app = express();
 const cors = require("cors");
 
@@ -11,6 +12,7 @@ app.use(express.urlencoded({ extended: false }));
 
 //routes
 app.use("/api/assembly", assemblyRoute);
+app.use("/api/user", userLoginAssemblyRoute);
 
 mongoose
   .connect(

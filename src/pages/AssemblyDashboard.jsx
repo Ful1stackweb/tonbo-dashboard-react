@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import SideMenu from "../components/SideMenu";
 import NewAssembledDetector from "../sections/Assembly/NewAssembledDetector";
 import InspectAndSensitivityTest from "../sections/Assembly/InspectAndSensitivityTest";
@@ -8,8 +8,11 @@ import OverallAssembled from "../sections/Assembly/OverallAssembled";
 import Update from "../sections/Assembly/Update";
 import TonboDetector from "../sections/Assembly/TonboDetector";
 import { Route, Routes } from "react-router-dom";
+import { useAuth } from "../../backend/firebase/AuthContect";
 
 const AssemblyDashboard = () => {
+  const { userData } = useAuth();
+
   return (
     <div className="flex">
       <div>
@@ -19,11 +22,11 @@ const AssemblyDashboard = () => {
         <Routes>
           <Route
             path="new-assembled-detector"
-            element={<NewAssembledDetector />}
+            element={<NewAssembledDetector userData={userData} />}
           />
           <Route
             path="inspect-sensitivity"
-            element={<InspectAndSensitivityTest />}
+            element={<InspectAndSensitivityTest userData={userData} />}
           />
           <Route path="sensor-replacement" element={<SensorReplacement />} />
           <Route path="dust-sensor" element={<DustSensor />} />

@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 import axios from "axios";
 
-const NewAssembledDetector = () => {
+const NewAssembledDetector = ({ userData }) => {
   const [rows, setRows] = useState([
     {
       tonboSlNo: "",
@@ -13,12 +13,13 @@ const NewAssembledDetector = () => {
   ]);
   const [totalSerialCount, setTotalSerialCount] = useState(0);
   const [currentDate, setCurrentDate] = useState("");
-  const [userId, setUserId] = useState("44");
+  const [userId, setUserId] = useState("");
   const [sensorType, setSensorType] = useState("");
   const [unsavedChanges, setUnsavedChanges] = useState(false);
 
   useEffect(() => {
     updateTotalSerialCount();
+    setUserId(userData.userId);
     setCurrentDate(new Date().toISOString().substr(0, 10));
 
     const handleBeforeUnload = (event) => {
@@ -187,6 +188,7 @@ const NewAssembledDetector = () => {
                 className="form-control w-36 p-2 border border-gray-300 rounded-md shadow-inner"
                 value={currentDate}
                 onChange={(e) => setCurrentDate(e.target.value)}
+                readOnly
               />
             </div>
             <div className="form-group flex-1 mx-2">
@@ -359,4 +361,3 @@ const NewAssembledDetector = () => {
 };
 
 export default NewAssembledDetector;
-

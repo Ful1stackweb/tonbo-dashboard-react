@@ -3,7 +3,7 @@ import { useAuth } from "../../backend/firebase/AuthContect";
 import { useNavigate } from "react-router-dom";
 
 const TopNav = () => {
-  const { currentUser, logout } = useAuth();
+  const { currentUser, userData, logout } = useAuth();
 
   const navigate = useNavigate();
   const handleLogout = () => {
@@ -26,12 +26,15 @@ const TopNav = () => {
       </h1>
 
       {currentUser ? (
-        <button
-          onClick={handleLogout}
-          className="px-4 py-2 bg-[#78c987] text-white rounded-[25px] font-medium"
-        >
-          Logout
-        </button>
+        <div className="flex items-center space-x-7">
+          <p className="text-white text-xl">Welcome, {userData.username}</p>
+          <button
+            onClick={handleLogout}
+            className="px-4 py-2 bg-[#78c987] text-white rounded-[25px] font-medium"
+          >
+            Logout
+          </button>
+        </div>
       ) : (
         <button className="px-4 py-2 bg-[#78c987] text-white rounded-[25px] font-medium">
           Admin Login

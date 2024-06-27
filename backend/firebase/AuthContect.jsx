@@ -11,6 +11,7 @@ export function useAuth() {
 
 export function AuthProvider({ children }) {
   const [currentUser, setCurrentUser] = useState(null);
+  const [userData, setUserData] = useState("");
   const [loading, setLoading] = useState(true);
 
   const navigate = useNavigate();
@@ -43,12 +44,31 @@ export function AuthProvider({ children }) {
     const unsubscribe = auth.onAuthStateChanged((user) => {
       setLoading(false);
       setCurrentUser(user);
+
+      // Only fetch user data if user is authenticated
+      if (user) {
+        fetchUserData(user.uid); // Pass user.uid to fetchUserData
+      }
     });
+
+    const fetchUserData = async (uid) => {
+      try {
+        const response = await fetch(`http://localhost:3000/api/user/${uid}`);
+        if (response.ok) {
+          const data = await response.json();
+          setUserData(data);
+        } else {
+          console.error("Failed to fetch user data:", response.statusText);
+        }
+      } catch (error) {
+        console.error("Error fetching user data:", error.message);
+      }
+    };
+
     return unsubscribe;
   }, []);
 
-  const value = { currentUser, signin, logout };
-
+  const value = { currentUser, userData, signin, logout };
   return (
     <AuthContext.Provider value={value}>
       {!loading && children}
