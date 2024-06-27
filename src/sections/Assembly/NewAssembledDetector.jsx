@@ -13,14 +13,29 @@ const NewAssembledDetector = () => {
   ]);
   const [totalSerialCount, setTotalSerialCount] = useState(0);
   const [currentDate, setCurrentDate] = useState("");
-
   const [userId, setUserId] = useState("44");
-  const [sensorType, setSensorType] = useState("Test");
+  const [sensorType, setSensorType] = useState("");
+  const [unsavedChanges, setUnsavedChanges] = useState(false);
 
   useEffect(() => {
     updateTotalSerialCount();
     setCurrentDate(new Date().toISOString().substr(0, 10));
-  }, [rows]);
+
+    const handleBeforeUnload = (event) => {
+      if (unsavedChanges) {
+        const confirmationMessage =
+          "You have unsaved changes. Are you sure you want to leave?";
+        event.returnValue = confirmationMessage;
+        return confirmationMessage;
+      }
+    };
+
+    window.addEventListener("beforeunload", handleBeforeUnload);
+
+    return () => {
+      window.removeEventListener("beforeunload", handleBeforeUnload);
+    };
+  }, [unsavedChanges]);
 
   const updateTotalSerialCount = () => {
     const filledRows = rows.filter((row) => row.tonboSlNo.trim() !== "");
@@ -31,67 +46,23 @@ const NewAssembledDetector = () => {
     const newRows = [...rows];
     newRows[index][field] = value;
     setRows(newRows);
-
-    const isLastRow = index === rows.length - 1;
-
-    // Character limits for each field
-    const limits = {
-      tonboSlNo: 11,
-      sensorSlNo: 9,
-      proxyBoardSlNo: 11,
-      powerBoardSlNo: 5,
-      fpgaBoardSlNo: 5,
-    };
-
-    // Check if the input length has reached the limit
-    if (value.length === limits[field]) {
-      if (isLastRow) {
-        addNewRow();
-        setTimeout(() => {
-          const nextRow = document.getElementById(`row-${index + 1}`);
-          if (nextRow) {
-            const nextInput = nextRow.querySelector(`input[name="${field}"]`);
-            if (nextInput) {
-              nextInput.focus();
-            }
-          }
-        }, 0);
-      } else {
-        const nextInput = document.querySelector(
-          `#row-${index + 1} input[name="${field}"]`
-        );
-        if (nextInput) {
-          nextInput.focus();
-        }
-      }
-    }
+    setUnsavedChanges(true); // Mark changes as unsaved
   };
 
   const handleKeyPress = (index, field, e) => {
     if (e.key === "Enter") {
       e.preventDefault();
-      const isLastRow = index === rows.length - 1;
 
+      const isLastRow = index === rows.length - 1;
       if (isLastRow && field === "fpgaBoardSlNo") {
         addNewRow();
       }
 
-      // Focus the next row's field
-      if (isLastRow) {
-        const nextRow = document.getElementById(`row-${index + 1}`);
-        if (nextRow) {
-          const nextInput = nextRow.querySelector(`input[name="${field}"]`);
-          if (nextInput) {
-            nextInput.focus();
-          }
-        }
-      } else {
-        const nextInput = document.querySelector(
-          `#row-${index + 1} input[name="${field}"]`
-        );
-        if (nextInput) {
-          nextInput.focus();
-        }
+      const nextInput = document.querySelector(
+        `#row-${index + 1} input[name="${field}"]`
+      );
+      if (nextInput) {
+        nextInput.focus();
       }
     }
   };
@@ -107,6 +78,7 @@ const NewAssembledDetector = () => {
         fpgaBoardSlNo: "",
       },
     ]);
+    setUnsavedChanges(true); // Mark changes as unsaved
   };
 
   const deleteRow = (index) => {
@@ -114,6 +86,7 @@ const NewAssembledDetector = () => {
       const newRows = [...rows];
       newRows.splice(index, 1); // Remove the row at index
       setRows(newRows);
+      setUnsavedChanges(true); // Mark changes as unsaved
     }
   };
 
@@ -124,9 +97,8 @@ const NewAssembledDetector = () => {
 
       const formatDate = (date) => {
         const day = String(date.getDate()).padStart(2, "0");
-        const month = String(date.getMonth() + 1).padStart(2, "0"); // Months are zero-based
+        const month = String(date.getMonth() + 1).padStart(2, "0");
         const year = date.getFullYear();
-
         return `${year}-${month}-${day}`;
       };
 
@@ -163,6 +135,7 @@ const NewAssembledDetector = () => {
           fpgaBoardSlNo: "",
         },
       ]);
+      setUnsavedChanges(false); // Mark changes as saved
     } catch (error) {
       console.error("Error sending data:", error);
     }
@@ -214,12 +187,16 @@ const NewAssembledDetector = () => {
                 name="sensor-type"
                 id="sensor-type"
                 className="form-control w-full p-2 border border-gray-300 rounded-md shadow-inner"
+                value={sensorType}
+                onChange={(e) => setSensorType(e.target.value)}
               >
-                <option value="">Select Sensor Type</option>
-                <option value="option1">ATTO-Custom</option>
-                <option value="option2">ATTO-Panhead</option>
-                <option value="option3">Athena-Spartan</option>
-                <option value="option4">Athena-BHD</option>
+                <option value="" disabled hidden>
+                  Select Sensor Type
+                </option>
+                <option value="ATTO-Custom">ATTO-Custom</option>
+                <option value="ATTO-Panhead">ATTO-Panhead</option>
+                <option value="Athena-Spartan">Athena-Spartan</option>
+                <option value="Athena-BHD">Athena-BHD</option>
               </select>
             </div>
           </div>
