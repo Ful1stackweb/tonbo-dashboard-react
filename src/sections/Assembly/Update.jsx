@@ -4,10 +4,10 @@ const Update = () => {
   const [date, setDate] = useState('');
   const [search, setSearch] = useState('');
   const [statusData, setStatusData] = useState([
-    { slNo: 1, tiSlNo: 'TUV-9001234', status: 'PRODUCED' },
-    { slNo: 2, tiSlNo: 'TUV-9001234', status: 'PRODUCED' },
-    { slNo: 3, tiSlNo: 'TUV-9001234', status: 'PRODUCED' },
-    { slNo: 4, tiSlNo: 'TUV-9001234', status: 'PRODUCED' },
+    { slNo: 1, tiSlNo: 'TUV-9001234', status: 'NOT PRODUCED' },
+    { slNo: 2, tiSlNo: 'TUV-9001234', status: 'NOT PRODUCED' },
+    { slNo: 3, tiSlNo: 'TUV-9001234', status: 'NOT PRODUCED' },
+    { slNo: 4, tiSlNo: 'TUV-9001234', status: 'NOT PRODUCED' },
     // Additional rows can be added here
   ]);
 
@@ -33,28 +33,28 @@ const Update = () => {
 
       <div className="flex justify-between mb-6">
         <div className="w-1/2 pr-4">
-          <label htmlFor="date" className="block text-gray-700">Date</label>
+          <label htmlFor="date" className=" text-center block text-orange-600 font-semibold">Date</label>
           <input 
             type="date" 
             id="date" 
             name="date" 
-            className="mt-1 p-2 block w-full border rounded-md" 
+            className="mt-1 text-center p-2 block w-full border rounded-md" 
             value={date} 
             onChange={(e) => setDate(e.target.value)} 
           />
         </div>
         <div className="w-1/2 pl-4">
-          <label htmlFor="search-sl-no" className="block text-gray-700">Search SL.No</label>
+          <label htmlFor="search-sl-no" className="block text-center text-orange-600 font-semibold">Search SL.No</label>
           <div className="relative mt-1">
             <input 
               type="text" 
               id="search-sl-no" 
-              className="p-2 block w-full border rounded-md" 
+              className="p-2 block text-center w-full border rounded-md" 
               value={search} 
               onChange={handleSearch} 
             />
             <span className="absolute right-3 top-3">
-              <img src="/img/search.png" alt="Search" className="h-5 w-5" />
+              <img src="\src\assets\search.png" alt="Search" className="h-5 w-5" />
             </span>
           </div>
         </div>
