@@ -51,43 +51,47 @@ const NewAssembledDetector = ({ userData }) => {
       powerBoardSlNo: 5,
       fpgaBoardSlNo: 11,
     };
-  
+
     // Ensure value does not exceed the character limit
     if (value.length > limits[field]) {
       value = value.slice(0, limits[field]);
     }
-  
+
     const newRows = [...rows];
     newRows[index][field] = value;
     setRows(newRows);
     setUnsavedChanges(true);
-  
+
     // Check if the character limit is reached
     if (value.length === limits[field]) {
       autoShiftFocus(index, field);
     }
   };
-  
+
   const autoShiftFocus = (index, field) => {
     const nextRowIndex = index + 1;
-  
+
     // Check if the next row exists
     if (nextRowIndex < rows.length) {
-      const nextInput = document.querySelector(`#row-${nextRowIndex} input[name="${field}"]`);
+      const nextInput = document.querySelector(
+        `#row-${nextRowIndex} input[name="${field}"]`
+      );
       if (nextInput) {
         nextInput.focus();
       }
     } else {
       // Add new row if at the end
       addNewRow(() => {
-        const newInput = document.querySelector(`#row-${nextRowIndex} input[name="${field}"]`);
+        const newInput = document.querySelector(
+          `#row-${nextRowIndex} input[name="${field}"]`
+        );
         if (newInput) {
           newInput.focus();
         }
       });
     }
   };
-  
+
   const addNewRow = (callback) => {
     setRows([
       ...rows,
@@ -104,7 +108,7 @@ const NewAssembledDetector = ({ userData }) => {
 
     if (callback) callback();
   };
-  
+
   const deleteRow = (index) => {
     if (index !== 0) {
       const newRows = [...rows];
@@ -114,21 +118,21 @@ const NewAssembledDetector = ({ userData }) => {
       updateTotalSerialCount();
     }
   };
-  
+
   const saveData = async () => {
     try {
       const filledRows = rows.filter((row) => row.tonboSlNo.trim() !== "");
       const date = new Date();
-  
+
       const formatDate = (date) => {
         const day = String(date.getDate()).padStart(2, "0");
         const month = String(date.getMonth() + 1).padStart(2, "0");
         const year = date.getFullYear();
         return `${year}-${month}-${day}`;
       };
-  
+
       const formattedDate = formatDate(date);
-  
+
       for (let i = 0; i < filledRows.length; i++) {
         const dataToSend = {
           tonboSlNo: filledRows[i].tonboSlNo,
@@ -140,7 +144,7 @@ const NewAssembledDetector = ({ userData }) => {
           userId: userId,
           creationDate: formattedDate,
         };
-  
+
         const response = await axios.post(
           "http://localhost:3000/api/assembly",
           dataToSend
@@ -162,7 +166,7 @@ const NewAssembledDetector = ({ userData }) => {
       console.error("Error sending data:", error);
     }
   };
-  
+
   return (
     <div className="data p-6">
       <h2 className="text-2xl mb-4">New Assembled Detector</h2>
@@ -172,29 +176,30 @@ const NewAssembledDetector = ({ userData }) => {
             <span className="mr-2">Total Serial Numbers:</span>
             <span id="total-serial-count">{totalSerialCount}</span>
           </div>
-          <div className="form-group flex-1 mx-2">
-              <label
-                htmlFor="sensor-type"
-                className="block font-bold mb-1 text-orange-600"
-              >
-                Type of Sensor
-              </label>
-              <select
-                name="sensor-type"
-                id="sensor-type"
-                className="form-control w-full p-2 border border-gray-300 rounded-md shadow-inner"
-                value={sensorType}
-                onChange={(e) => setSensorType(e.target.value)}
-              >
-                <option value="" disabled hidden>
-                  Select Sensor Type
-                </option>
-                <option value="ATTO-Custom">ATTO-Custom</option>
-                <option value="ATTO-Panhead">ATTO-Panhead</option>
-                <option value="Athena-Spartan">Athena-Spartan</option>
-                <option value="Athena-BHD">Athena-BHD</option>
-              </select>
-            </div>
+          <div className="form-group flex-1 mx-2 text-center">
+            <label
+              htmlFor="sensor-type"
+              className="block font-bold mb-1 text-orange-600"
+            >
+              Type of Sensor
+            </label>
+            <select
+              name="sensor-type"
+              id="sensor-type"
+              className="form-control p-2 border border-gray-300 rounded-md shadow-inner mx-auto"
+              style={{ width: "200px" }} // Adjust the width as needed
+              value={sensorType}
+              onChange={(e) => setSensorType(e.target.value)}
+            >
+              <option value="" disabled hidden>
+                Select Sensor Type
+              </option>
+              <option value="ATTO-Custom">ATTO-Custom</option>
+              <option value="ATTO-Panhead">ATTO-Panhead</option>
+              <option value="Athena-Spartan">Athena-Spartan</option>
+              <option value="Athena-BHD">Athena-BHD</option>
+            </select>
+          </div>
           <button
             className="save-button bg-green-500 text-white py-2 px-4 rounded-full hover:bg-green-600 transition ease-in-out"
             onClick={saveData}
@@ -202,7 +207,7 @@ const NewAssembledDetector = ({ userData }) => {
             Save
           </button>
         </div>
-  
+
         <form className="centered-form flex flex-col w-full mx-auto">
           <div className="table-container overflow-x-auto max-h-96 relative mb-4">
             <table
