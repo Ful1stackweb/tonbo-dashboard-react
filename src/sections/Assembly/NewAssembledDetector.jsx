@@ -36,7 +36,7 @@ const NewAssembledDetector = ({ userData }) => {
     return () => {
       window.removeEventListener("beforeunload", handleBeforeUnload);
     };
-  }, [unsavedChanges]);
+  }, [unsavedChanges, userData.userId]);
 
   const updateTotalSerialCount = () => {
     const filledRows = rows.filter((row) => row.tonboSlNo.trim() !== "");
@@ -44,12 +44,6 @@ const NewAssembledDetector = ({ userData }) => {
   };
 
   const handleInputChange = (index, field, value) => {
-    const newRows = [...rows];
-    newRows[index][field] = value;
-    setRows(newRows);
-    setUnsavedChanges(true); // Mark changes as unsaved
-
-    // Check if the input length has reached the limit
     const limits = {
       tonboSlNo: 11,
       sensorSlNo: 9,
@@ -57,31 +51,44 @@ const NewAssembledDetector = ({ userData }) => {
       powerBoardSlNo: 5,
       fpgaBoardSlNo: 11,
     };
-
+  
+    // Ensure value does not exceed the character limit
+    if (value.length > limits[field]) {
+      value = value.slice(0, limits[field]);
+    }
+  
+    const newRows = [...rows];
+    newRows[index][field] = value;
+    setRows(newRows);
+    setUnsavedChanges(true);
+  
+    // Check if the character limit is reached
     if (value.length === limits[field]) {
-      addNewRow(); // Automatically add a new row
+      autoShiftFocus(index, field);
     }
   };
-
-  const handleKeyPress = (index, field, e) => {
-    if (e.key === "Enter") {
-      e.preventDefault();
-
-      const isLastRow = index === rows.length - 1;
-      if (isLastRow && field === "fpgaBoardSlNo") {
-        addNewRow();
-      }
-
-      const nextInput = document.querySelector(
-        `#row-${index + 1} input[name="${field}"]`
-      );
+  
+  const autoShiftFocus = (index, field) => {
+    const nextRowIndex = index + 1;
+  
+    // Check if the next row exists
+    if (nextRowIndex < rows.length) {
+      const nextInput = document.querySelector(`#row-${nextRowIndex} input[name="${field}"]`);
       if (nextInput) {
         nextInput.focus();
       }
+    } else {
+      // Add new row if at the end
+      addNewRow(() => {
+        const newInput = document.querySelector(`#row-${nextRowIndex} input[name="${field}"]`);
+        if (newInput) {
+          newInput.focus();
+        }
+      });
     }
   };
-
-  const addNewRow = () => {
+  
+  const addNewRow = (callback) => {
     setRows([
       ...rows,
       {
@@ -92,36 +99,36 @@ const NewAssembledDetector = ({ userData }) => {
         fpgaBoardSlNo: "",
       },
     ]);
-    setUnsavedChanges(true); // Mark changes as unsaved
-  };
+    setUnsavedChanges(true);
+    updateTotalSerialCount();
 
+    if (callback) callback();
+  };
+  
   const deleteRow = (index) => {
     if (index !== 0) {
       const newRows = [...rows];
-      newRows.splice(index, 1); // Remove the row at index
+      newRows.splice(index, 1);
       setRows(newRows);
-      setUnsavedChanges(true); // Mark changes as unsaved
+      setUnsavedChanges(true);
+      updateTotalSerialCount();
     }
   };
-
+  
   const saveData = async () => {
     try {
       const filledRows = rows.filter((row) => row.tonboSlNo.trim() !== "");
       const date = new Date();
-
+  
       const formatDate = (date) => {
         const day = String(date.getDate()).padStart(2, "0");
         const month = String(date.getMonth() + 1).padStart(2, "0");
         const year = date.getFullYear();
         return `${year}-${month}-${day}`;
       };
-
-      const userData = {
-        userId: userId,
-        sensorType: sensorType,
-      };
+  
       const formattedDate = formatDate(date);
-
+  
       for (let i = 0; i < filledRows.length; i++) {
         const dataToSend = {
           tonboSlNo: filledRows[i].tonboSlNo,
@@ -133,7 +140,7 @@ const NewAssembledDetector = ({ userData }) => {
           userId: userId,
           creationDate: formattedDate,
         };
-
+  
         const response = await axios.post(
           "http://localhost:3000/api/assembly",
           dataToSend
@@ -149,12 +156,13 @@ const NewAssembledDetector = ({ userData }) => {
           fpgaBoardSlNo: "",
         },
       ]);
-      setUnsavedChanges(false); // Mark changes as saved
+      setUnsavedChanges(false);
+      updateTotalSerialCount();
     } catch (error) {
       console.error("Error sending data:", error);
     }
   };
-
+  
   return (
     <div className="data p-6">
       <h2 className="text-2xl mb-4">New Assembled Detector</h2>
@@ -171,51 +179,8 @@ const NewAssembledDetector = ({ userData }) => {
             Save
           </button>
         </div>
-
+  
         <form className="centered-form flex flex-col w-full mx-auto">
-          <div className="form-row flex justify-between items-center mb-4">
-            <div className="form-group flex-1 mx-2">
-              <label
-                htmlFor="date"
-                className="block font-bold mb-1 text-orange-600"
-              >
-                Date
-              </label>
-              <input
-                type="date"
-                id="date"
-                name="date"
-                className="form-control w-36 p-2 border border-gray-300 rounded-md shadow-inner"
-                value={currentDate}
-                onChange={(e) => setCurrentDate(e.target.value)}
-                readOnly
-              />
-            </div>
-            <div className="form-group flex-1 mx-2">
-              <label
-                htmlFor="sensor-type"
-                className="block font-bold mb-1 text-orange-600"
-              >
-                Type of Sensor
-              </label>
-              <select
-                name="sensor-type"
-                id="sensor-type"
-                className="form-control w-full p-2 border border-gray-300 rounded-md shadow-inner"
-                value={sensorType}
-                onChange={(e) => setSensorType(e.target.value)}
-              >
-                <option value="" disabled hidden>
-                  Select Sensor Type
-                </option>
-                <option value="ATTO-Custom">ATTO-Custom</option>
-                <option value="ATTO-Panhead">ATTO-Panhead</option>
-                <option value="Athena-Spartan">Athena-Spartan</option>
-                <option value="Athena-BHD">Athena-BHD</option>
-              </select>
-            </div>
-          </div>
-
           <div className="table-container overflow-x-auto max-h-96 relative mb-4">
             <table
               id="my-table"
@@ -249,44 +214,36 @@ const NewAssembledDetector = ({ userData }) => {
               <tbody>
                 {rows.map((row, index) => (
                   <tr key={index} id={`row-${index}`}>
-                    <td className="border border-gray-400 sticky left-0 z-10">
+                    <td className="border border-gray-400 sticky left-0 bg-gray-100 font-semibold">
                       {index + 1}
                     </td>
-                    <td className="border-gray-400">
+                    <td className="border border-gray-400">
                       <input
                         type="text"
                         name="tonboSlNo"
-                        className="form-control w-11/12 p-1 border border-red-400 rounded-sm text-center m-auto block"
+                        className="form-control w-full p-2 border border-gray-300 rounded-md shadow-inner"
                         value={row.tonboSlNo}
                         onChange={(e) =>
                           handleInputChange(index, "tonboSlNo", e.target.value)
                         }
-                        onKeyPress={(e) =>
-                          handleKeyPress(index, "tonboSlNo", e)
-                        }
-                        maxLength="11"
                       />
                     </td>
                     <td className="border border-gray-400">
                       <input
                         type="text"
                         name="sensorSlNo"
-                        className="form-control w-11/12 p-1 border border-red-400 rounded-sm text-center m-auto block"
+                        className="form-control w-full p-2 border border-gray-300 rounded-md shadow-inner"
                         value={row.sensorSlNo}
                         onChange={(e) =>
                           handleInputChange(index, "sensorSlNo", e.target.value)
                         }
-                        onKeyPress={(e) =>
-                          handleKeyPress(index, "sensorSlNo", e)
-                        }
-                        maxLength="9"
                       />
                     </td>
                     <td className="border border-gray-400">
                       <input
                         type="text"
                         name="proxyBoardSlNo"
-                        className="form-control w-11/12 p-1 border border-red-400 rounded-sm text-center m-auto block"
+                        className="form-control w-full p-2 border border-gray-300 rounded-md shadow-inner"
                         value={row.proxyBoardSlNo}
                         onChange={(e) =>
                           handleInputChange(
@@ -295,17 +252,13 @@ const NewAssembledDetector = ({ userData }) => {
                             e.target.value
                           )
                         }
-                        onKeyPress={(e) =>
-                          handleKeyPress(index, "proxyBoardSlNo", e)
-                        }
-                        maxLength="11"
                       />
                     </td>
                     <td className="border border-gray-400">
                       <input
                         type="text"
                         name="powerBoardSlNo"
-                        className="form-control w-11/12 p-1 border border-red-400 rounded-sm text-center m-auto block"
+                        className="form-control w-full p-2 border border-gray-300 rounded-md shadow-inner"
                         value={row.powerBoardSlNo}
                         onChange={(e) =>
                           handleInputChange(
@@ -314,17 +267,13 @@ const NewAssembledDetector = ({ userData }) => {
                             e.target.value
                           )
                         }
-                        onKeyPress={(e) =>
-                          handleKeyPress(index, "powerBoardSlNo", e)
-                        }
-                        maxLength="5"
                       />
                     </td>
                     <td className="border border-gray-400">
                       <input
                         type="text"
                         name="fpgaBoardSlNo"
-                        className="form-control w-11/12 p-1 border border-red-400 rounded-sm text-center m-auto block"
+                        className="form-control w-full p-2 border border-gray-300 rounded-md shadow-inner"
                         value={row.fpgaBoardSlNo}
                         onChange={(e) =>
                           handleInputChange(
@@ -333,21 +282,16 @@ const NewAssembledDetector = ({ userData }) => {
                             e.target.value
                           )
                         }
-                        onKeyPress={(e) =>
-                          handleKeyPress(index, "fpgaBoardSlNo", e)
-                        }
-                        maxLength="11"
                       />
                     </td>
                     <td className="border border-gray-400">
-                      {index !== 0 && (
-                        <button
-                          className="delete-button bg-red-500 text-white py-1 px-2 rounded-full hover:bg-red-600 transition ease-in-out"
-                          onClick={() => deleteRow(index)}
-                        >
-                          Delete
-                        </button>
-                      )}
+                      <button
+                        type="button"
+                        className="delete-button bg-red-500 text-white py-1 px-2 rounded-full hover:bg-red-600 transition ease-in-out"
+                        onClick={() => deleteRow(index)}
+                      >
+                        Delete
+                      </button>
                     </td>
                   </tr>
                 ))}
