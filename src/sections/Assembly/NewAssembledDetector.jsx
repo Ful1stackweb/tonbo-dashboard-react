@@ -172,6 +172,29 @@ const NewAssembledDetector = ({ userData }) => {
             <span className="mr-2">Total Serial Numbers:</span>
             <span id="total-serial-count">{totalSerialCount}</span>
           </div>
+          <div className="form-group flex-1 mx-2">
+              <label
+                htmlFor="sensor-type"
+                className="block font-bold mb-1 text-orange-600"
+              >
+                Type of Sensor
+              </label>
+              <select
+                name="sensor-type"
+                id="sensor-type"
+                className="form-control w-full p-2 border border-gray-300 rounded-md shadow-inner"
+                value={sensorType}
+                onChange={(e) => setSensorType(e.target.value)}
+              >
+                <option value="" disabled hidden>
+                  Select Sensor Type
+                </option>
+                <option value="ATTO-Custom">ATTO-Custom</option>
+                <option value="ATTO-Panhead">ATTO-Panhead</option>
+                <option value="Athena-Spartan">Athena-Spartan</option>
+                <option value="Athena-BHD">Athena-BHD</option>
+              </select>
+            </div>
           <button
             className="save-button bg-green-500 text-white py-2 px-4 rounded-full hover:bg-green-600 transition ease-in-out"
             onClick={saveData}
