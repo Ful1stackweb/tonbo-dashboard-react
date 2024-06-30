@@ -6,7 +6,7 @@ import { saveAs } from 'file-saver';
 const OverallAssembled = () => {
   const [startDate, setStartDate] = useState('');
   const [endDate, setEndDate] = useState('');
-  const [type, setType] = useState('all');
+  const [typeFilter, setTypeFilter] = useState('all');
   const [count, setCount] = useState(0);
 
   const rows = [
@@ -28,7 +28,7 @@ const OverallAssembled = () => {
         if ((!isNaN(start) && date < start) || (!isNaN(end) && date > end)) {
           return;
         }
-        if (type !== 'all' && row.type !== type) {
+        if (typeFilter !== 'all' && row.type !== typeFilter) {
           return;
         }
         totalCount += row.count;
@@ -38,7 +38,7 @@ const OverallAssembled = () => {
     };
 
     filterRows();
-  }, [startDate, endDate, type]);
+  }, [startDate, endDate, typeFilter]);
 
   const handleDownload = async () => {
     const workbook = new ExcelJS.Workbook();
@@ -54,7 +54,7 @@ const OverallAssembled = () => {
       if (
         (!startDate || new Date(row.date) >= new Date(startDate)) &&
         (!endDate || new Date(row.date) <= new Date(endDate)) &&
-        (type === 'all' || row.type === type)
+        (typeFilter === 'all' || row.type === typeFilter)
       ) {
         for (let i = 0; i < row.count; i++) {
           worksheet.addRow({
@@ -78,8 +78,8 @@ const OverallAssembled = () => {
       <div className="text-center mb-6">
         <div className="inline-block p-4 rounded-lg bg-gray-100 mb-6">
           <span className="mr-4">New detectors</span>
-          <button className="bg-green-500 text-white py-2 px-4 rounded-lg mr-2">ATTO</button>
-          <button className="bg-blue-500 text-white py-2 px-4 rounded-lg">ATHENA</button>
+          <button onClick={() => setTypeFilter('ATTO')} className="bg-green-500 text-white py-2 px-4 rounded-lg mr-2">ATTO</button>
+          <button onClick={() => setTypeFilter('ATHENA')} className="bg-blue-500 text-white py-2 px-4 rounded-lg">ATHENA</button>
         </div>
       </div>
 
@@ -97,16 +97,18 @@ const OverallAssembled = () => {
             </thead>
             <tbody>
               {rows.map((row, index) => (
-                <tr key={index}>
-                  <td className="border border-black p-2 text-center">{row.date}</td>
-                  <td className="border border-black p-2 text-center">{row.type}</td>
-                  <td className="border border-black p-2 text-center">{row.count}</td>
-                  <td className="border border-black p-2 text-center">
-                    <button onClick={() => handleDownload(row)} className="bg-gray-200 text-gray-700 py-1 px-3 rounded">
-                      <FaDownload />
-                    </button>
-                  </td>
-                </tr>
+                (typeFilter === 'all' || row.type === typeFilter) && (
+                  <tr key={index}>
+                    <td className="border border-black p-2 text-center">{row.date}</td>
+                    <td className="border border-black p-2 text-center">{row.type}</td>
+                    <td className="border border-black p-2 text-center">{row.count}</td>
+                    <td className="border border-black p-2 text-center">
+                      <button onClick={() => handleDownload(row)} className="bg-gray-200 text-gray-700 py-1 px-3 rounded">
+                        <FaDownload />
+                      </button>
+                    </td>
+                  </tr>
+                )
               ))}
             </tbody>
           </table>
@@ -125,7 +127,7 @@ const OverallAssembled = () => {
             </label>
             <label className="block text-red-500 font-semibold">
               Type:
-              <select className="ml-2 p-1 border text-gray-700 border-black rounded" value={type} onChange={(e) => setType(e.target.value)}>
+              <select className="ml-2 p-1 border text-gray-700 border-black rounded" value={typeFilter} onChange={(e) => setTypeFilter(e.target.value)}>
                 <option value="all">All</option>
                 <option value="ATTO">ATTO</option>
                 <option value="ATHENA">ATHENA</option>
