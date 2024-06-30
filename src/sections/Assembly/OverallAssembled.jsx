@@ -1,4 +1,7 @@
 import React, { useState, useEffect } from 'react';
+import { FaDownload } from 'react-icons/fa';
+import ExcelJS from 'exceljs';
+import { saveAs } from 'file-saver';
 
 const OverallAssembled = () => {
   const [startDate, setStartDate] = useState('');
@@ -37,8 +40,39 @@ const OverallAssembled = () => {
     filterRows();
   }, [startDate, endDate, type]);
 
+  const handleDownload = async () => {
+    const workbook = new ExcelJS.Workbook();
+    const worksheet = workbook.addWorksheet('Sheet1');
+    
+    worksheet.columns = [
+      { header: 'Date', key: 'date', width: 15 },
+      { header: 'Type', key: 'type', width: 15 },
+      { header: 'Serial Number', key: 'serialNumber', width: 20 },
+    ];
+
+    rows.forEach((row) => {
+      if (
+        (!startDate || new Date(row.date) >= new Date(startDate)) &&
+        (!endDate || new Date(row.date) <= new Date(endDate)) &&
+        (type === 'all' || row.type === type)
+      ) {
+        for (let i = 0; i < row.count; i++) {
+          worksheet.addRow({
+            date: row.date,
+            type: row.type,
+            serialNumber: `SN${i + 1}`, // Example serial number generation
+          });
+        }
+      }
+    });
+
+    const buffer = await workbook.xlsx.writeBuffer();
+    const blob = new Blob([buffer], { type: 'application/octet-stream' });
+    saveAs(blob, 'OverallAssembled.xlsx');
+  };
+
   return (
-    <div style={{ width: '1200px' }} className="bg-white shadow-md rounded-lg p-6 mx-auto my-10">
+    <div style={{ maxWidth: '1200px' }} className="bg-white shadow-md rounded-lg p-6 mx-auto my-10">
       <h1 className="text-3xl font-bold text-center mb-6">Overall Assembled</h1>
       
       <div className="text-center mb-6">
@@ -49,23 +83,29 @@ const OverallAssembled = () => {
         </div>
       </div>
 
-      <div className="flex justify-center text-center">
+      <div className="flex justify-center">
         <div className="w-1/2 p-4 border border-black rounded-lg">
           <h3 className="text-xl font-bold text-red-500 mb-4 text-center">New Detector Assembled</h3>
           <table className="w-full border-collapse border border-black mb-4">
             <thead>
               <tr>
-                <th className="border border-black p-2">Date</th>
-                <th className="border border-black p-2">Type</th>
-                <th className="border border-black p-2">Count</th>
+                <th className="border border-black p-2 text-center">Date</th>
+                <th className="border border-black p-2 text-center">Type</th>
+                <th className="border border-black p-2 text-center">Count</th>
+                <th className="border border-black p-2 text-center">Download</th>
               </tr>
             </thead>
             <tbody>
               {rows.map((row, index) => (
                 <tr key={index}>
-                  <td className="border border-black p-2">{row.date}</td>
-                  <td className="border border-black p-2">{row.type}</td>
-                  <td className="border border-black p-2">{row.count}</td>
+                  <td className="border border-black p-2 text-center">{row.date}</td>
+                  <td className="border border-black p-2 text-center">{row.type}</td>
+                  <td className="border border-black p-2 text-center">{row.count}</td>
+                  <td className="border border-black p-2 text-center">
+                    <button onClick={() => handleDownload(row)} className="bg-gray-200 text-gray-700 py-1 px-3 rounded">
+                      <FaDownload />
+                    </button>
+                  </td>
                 </tr>
               ))}
             </tbody>
@@ -74,40 +114,44 @@ const OverallAssembled = () => {
         
         <div className="w-1/2 p-4 border border-black rounded-lg ml-4">
           <h3 className="text-xl font-bold text-red-500 mb-4 text-center">Date wise count Assembled</h3>
-          <div className="flex justify-around items-center mb-4" >
-          <label className="block text-red-500 font-semibold">
-  Start:
-  <input type="date" className="ml-2 p-1 border text-gray-700 border-black rounded" value={startDate} onChange={(e) => setStartDate(e.target.value)} />
-</label>
-<label className="block text-red-500 font-semibold">
-  End:
-  <input type="date" className="ml-2 p-1 border text-gray-700 border-black rounded" value={endDate} onChange={(e) => setEndDate(e.target.value)} />
-</label>
-<label className="block text-red-500 font-semibold">
-  Type:
-  <select className="ml-2 p-1 border text-gray-700 border-black rounded" value={type} onChange={(e) => setType(e.target.value)}>
-    <option value="all">All</option>
-    <option value="ATTO">ATTO</option>
-    <option value="ATHENA">ATHENA</option>
-  </select>
-</label>
-
+          <div className="flex justify-around items-center mb-4">
+            <label className="block text-red-500 font-semibold">
+              Start:
+              <input type="date" className="ml-2 p-1 border text-gray-700 border-black rounded" value={startDate} onChange={(e) => setStartDate(e.target.value)} />
+            </label>
+            <label className="block text-red-500 font-semibold">
+              End:
+              <input type="date" className="ml-2 p-1 border text-gray-700 border-black rounded" value={endDate} onChange={(e) => setEndDate(e.target.value)} />
+            </label>
+            <label className="block text-red-500 font-semibold">
+              Type:
+              <select className="ml-2 p-1 border text-gray-700 border-black rounded" value={type} onChange={(e) => setType(e.target.value)}>
+                <option value="all">All</option>
+                <option value="ATTO">ATTO</option>
+                <option value="ATHENA">ATHENA</option>
+              </select>
+            </label>
           </div>
-         <div className="flex justify-center items-center mt-10">
-  <table className="w-24 border-collapse border border-black">
-    <thead>
-      <tr>
-        <th className="border border-black p-2 text-center">Count</th>
-      </tr>
-    </thead>
-    <tbody>
-      <tr>
-        <td className="border border-black p-2 text-center">{count}</td>
-      </tr>
-    </tbody>
-  </table>
-</div>
-
+          <div className="flex justify-center items-center">
+            <table className="w-24 border-collapse border border-black">
+              <thead>
+                <tr>
+                  <th className="border border-black p-2 text-center">Count</th>
+                  <th className="border border-black p-2 text-center">Download</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td className="border border-black p-2 text-center">{count}</td>
+                  <td className="border border-black p-2 text-center">
+                    <button onClick={handleDownload} className="bg-gray-200 text-gray-700 py-1 px-3 rounded">
+                      <FaDownload />
+                    </button>
+                  </td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
         </div>
       </div>
 
