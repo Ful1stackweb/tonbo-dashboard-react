@@ -10,9 +10,9 @@ const OverallAssembled = () => {
   const [count, setCount] = useState(0);
 
   const rows = [
-    { date: '2023-06-01', type: 'ATTO', count: 5 },
-    { date: '2023-06-02', type: 'ATHENA', count: 3 },
-    { date: '2023-06-03', type: 'ATTO', count: 2 },
+    { date: '25-06-2024', type: 'ATTO', count: 5 },
+    { date: '27-06-2024', type: 'ATHENA', count: 3 },
+    { date: '28-06-2024', type: 'ATTO', count: 2 },
     // Additional rows can be added here
   ];
 
