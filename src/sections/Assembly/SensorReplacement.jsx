@@ -169,33 +169,41 @@ const SensorReplacement = () => {
           </tbody>
         </table>
         <div className="dropdown-container flex items-center justify-between p-4 bg-gray-100 rounded-md">
-          <label htmlFor="dropdown1" className="font-bold">
-            What was changed in detector :
-          </label>
-          <select
+          <div className="flex items-center">
+            <label htmlFor="dropdown1" className="font-bold mr-2">
+              What was changed in detector:
+            </label>
+            <select
             id="dropdown1"
             className="dropdown p-2 border border-gray-300 rounded-md"
             value={dropdown1}
             onChange={(e) => setDropdown1(e.target.value)}
+            style={{ width: '200px' }}
           >
             <option value="">Board details</option>
             {/* Add other options as necessary */}
           </select>
+          </div>
+          <div className="flex flex-1 justify-center">
           <select
             id="dropdown2"
             className="dropdown p-2 border border-gray-300 rounded-md"
             value={dropdown2}
             onChange={(e) => setDropdown2(e.target.value)}
+            style={{ width: '200px' }}
           >
-            <option value="">Who changed Boards</option>
+            <option value="">Board details</option>
             {/* Add other options as necessary */}
           </select>
-          <button
-            className="save-btn bg-green-600 text-white p-2 rounded-md font-bold"
-            onClick={handleSave}
-          >
-            SAVE
-          </button>
+          </div>
+          <div className="flex items-center">
+            <button
+              className="save-btn bg-green-600 text-white p-2 rounded-md font-bold"
+              onClick={handleSave}
+            >
+              SAVE
+            </button>
+          </div>
         </div>
       </div>
     </div>

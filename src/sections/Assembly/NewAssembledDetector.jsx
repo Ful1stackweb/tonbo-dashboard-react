@@ -49,7 +49,7 @@ const NewAssembledDetector = ({ userData }) => {
       sensorSlNo: 9,
       proxyBoardSlNo: 11,
       powerBoardSlNo: 5,
-      fpgaBoardSlNo: 11,
+      fpgaBoardSlNo: 5,
     };
 
     // Ensure value does not exceed the character limit
