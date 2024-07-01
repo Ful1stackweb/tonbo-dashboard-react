@@ -84,38 +84,38 @@ const SensorReplacement = () => {
   };
 
   return (
-    <div className="container mx-auto p-4">
-      <div className="header-container flex justify-center items-center mt-5">
-        <h2 className="text-2xl font-bold">Board and Sensor Replacement</h2>
+  <div className="container mx-auto p-4">
+  <div className="header-container flex justify-center items-center mt-5">
+    <h2 className="text-2xl font-bold">Board and Sensor Replacement</h2>
+  </div>
+  <div className="counts-container flex justify-end items-center space-x-4 mt-5">
+    <div className="count-box bg-white p-4 rounded-lg shadow-md flex items-center">
+      <div className="count-item text-center">
+        <p className="count-title text-gray-600">Sensor Count</p>
+        <p className="count-value text-lg font-bold" id="sensor-count">{sensorCount}</p>
       </div>
-      <div className="counts-container flex justify-end items-center space-x-4 mt-5">
-        <div className="count-box bg-white p-4 rounded-lg shadow-md flex items-center">
-          <div className="count-item text-center">
-            <p className="count-title text-gray-600">Sensor Count</p>
-            <p className="count-value text-lg font-bold" id="sensor-count">{sensorCount}</p>
-          </div>
-          <div className="count-divider border-r h-8 mx-4"></div>
-          <div className="count-item text-center">
-            <p className="count-title text-gray-600">Board Count</p>
-            <p className="count-value text-lg font-bold" id="board-count">{boardCount}</p>
-          </div>
-        </div>
+      <div className="count-divider border-r h-8 mx-4"></div>
+      <div className="count-item text-center">
+        <p className="count-title text-gray-600">Board Count</p>
+        <p className="count-value text-lg font-bold" id="board-count">{boardCount}</p>
       </div>
-      <div className="content-container bg-white p-6 rounded-lg shadow-md mt-6">
-        <div className="search-status-container flex flex-col items-center mb-6">
-          <div className="search-container flex items-center space-x-4 mb-4">
-            <label htmlFor="search-sl-no" className="font-bold">
-              Serial.No
-            </label>
-            <input
-              type="text"
-              id="search-sl-no"
-              className="form-control border border-gray-300 p-2 rounded-md"
-            />
-            <button className="search-btn bg-transparent border-none cursor-pointer" onClick={handleSearch}>
-              <FaSearch />
-            </button>
-          </div>
+    </div>
+  </div>
+  <div className="content-container bg-white p-6 rounded-lg shadow-md -mb-4 mt-6">
+    <div className="search-status-container flex flex-col items-center mb-6 ">
+      <div className="search-container flex items-center space-x-4 mb-4 mt-[-6rem]"> 
+        <label htmlFor="search-sl-no" className="font-bold">
+          Serial.No
+        </label>
+        <input
+          type="text"
+          id="search-sl-no"
+          className="form-control border border-gray-300 p-2 rounded-md"
+        />
+        <button className="search-btn bg-transparent border-none cursor-pointer" onClick={handleSearch}>
+          <FaSearch />
+        </button>
+      </div>
           <div className="status-container flex justify-center items-center border-2 border-gray-300 rounded-lg p-2 text-center space-x-4">
             <div className="status-box failed w-40 bg-red-200 text-red-700 rounded-md p-2 font-bold text-sm">
               Failed

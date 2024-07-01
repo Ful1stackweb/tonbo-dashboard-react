@@ -43,7 +43,7 @@ const NewAssembledDetector = ({ userData }) => {
     setTotalSerialCount(filledRows.length);
   };
 
-  const handleInputChange = (index, field, value) => {
+  const handleInputChange = (index, field, value, isScanner = false) => {
     const limits = {
       tonboSlNo: 11,
       sensorSlNo: 9,
@@ -52,8 +52,8 @@ const NewAssembledDetector = ({ userData }) => {
       fpgaBoardSlNo: 5,
     };
 
-    // Ensure value does not exceed the character limit
-    if (value.length > limits[field]) {
+    // Ensure value does not exceed the character limit for manual input
+    if (!isScanner && value.length > limits[field]) {
       value = value.slice(0, limits[field]);
     }
 
@@ -62,8 +62,8 @@ const NewAssembledDetector = ({ userData }) => {
     setRows(newRows);
     setUnsavedChanges(true);
 
-    // Check if the character limit is reached
-    if (value.length === limits[field]) {
+    // Automatically move to the next row for scanner input or if manual input reaches the character limit
+    if (isScanner || (!isScanner && value.length === limits[field])) {
       autoShiftFocus(index, field);
     }
   };
@@ -253,7 +253,12 @@ const NewAssembledDetector = ({ userData }) => {
                         className="form-control w-full p-2 border border-gray-300 rounded-md shadow-inner"
                         value={row.tonboSlNo}
                         onChange={(e) =>
-                          handleInputChange(index, "tonboSlNo", e.target.value)
+                          handleInputChange(
+                            index,
+                            "tonboSlNo",
+                            e.target.value,
+                            e.nativeEvent.inputType === "insertFromPaste" || e.nativeEvent.isComposing
+                          )
                         }
                       />
                     </td>
@@ -264,7 +269,12 @@ const NewAssembledDetector = ({ userData }) => {
                         className="form-control w-full p-2 border border-gray-300 rounded-md shadow-inner"
                         value={row.sensorSlNo}
                         onChange={(e) =>
-                          handleInputChange(index, "sensorSlNo", e.target.value)
+                          handleInputChange(
+                            index,
+                            "sensorSlNo",
+                            e.target.value,
+                            e.nativeEvent.inputType === "insertFromPaste" || e.nativeEvent.isComposing
+                          )
                         }
                       />
                     </td>
@@ -278,7 +288,8 @@ const NewAssembledDetector = ({ userData }) => {
                           handleInputChange(
                             index,
                             "proxyBoardSlNo",
-                            e.target.value
+                            e.target.value,
+                            e.nativeEvent.inputType === "insertFromPaste" || e.nativeEvent.isComposing
                           )
                         }
                       />
@@ -293,7 +304,8 @@ const NewAssembledDetector = ({ userData }) => {
                           handleInputChange(
                             index,
                             "powerBoardSlNo",
-                            e.target.value
+                            e.target.value,
+                            e.nativeEvent.inputType === "insertFromPaste" || e.nativeEvent.isComposing
                           )
                         }
                       />
@@ -308,7 +320,8 @@ const NewAssembledDetector = ({ userData }) => {
                           handleInputChange(
                             index,
                             "fpgaBoardSlNo",
-                            e.target.value
+                            e.target.value,
+                            e.nativeEvent.inputType === "insertFromPaste" || e.nativeEvent.isComposing
                           )
                         }
                       />
