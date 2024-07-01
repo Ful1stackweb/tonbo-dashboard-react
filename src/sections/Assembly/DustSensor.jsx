@@ -8,22 +8,26 @@ const DustSensor = () => {
     { slNo: 4, tiSlNo: 'TUV-9001237', status: 'failed', rejection: '' },
   ]);
   const [clearedDust, setClearedDust] = useState('');
+  const [searchTerm, setSearchTerm] = useState('');
 
   const handleStatusChange = (index, newStatus) => {
     const newTableData = tableData.map((row, i) => (i === index ? { ...row, status: newStatus } : row));
     setTableData(newTableData);
   };
 
+  const filteredData = tableData.filter(row => 
+    row.tiSlNo.toLowerCase().includes(searchTerm.toLowerCase())
+  );
+
   return (
     <div style={{ width: '1200px' }} className="p-6 bg-gray-100 min-h-screen">
       <h1 className="text-3xl font-bold text-center mb-6">Dust Sensor Module</h1>
       <div className="container mx-auto p-4 bg-white rounded shadow">
         <div className="mb-4 text-right">
-          <span className="text-sm font-semibold">Sensor Count: 4</span>
+          <span className="text-sm font-semibold">Sensor Count: {filteredData.length}</span>
         </div>
         <div className="mb-4">
           <label htmlFor="date" className="block text-sm text-orange-600 font-semibold pl-28">Date</label>
-
           <input
             style={{ width: '280px' }}
             type="date"
@@ -34,10 +38,12 @@ const DustSensor = () => {
         </div>
         <div className="flex items-center justify-center mb-4">
           <div style={{ width: '350px' }} className="relative w-1/2">
-            <label htmlFor="search-sl-no" className="block text-sm  text-orange-600 font-semibold text-center">Search SL.No</label>
+            <label htmlFor="search-sl-no" className="block text-sm text-orange-600 font-semibold text-center">Search SL.No</label>
             <input
               type="text"
               id="search-sl-no"
+              value={searchTerm}
+              onChange={(e) => setSearchTerm(e.target.value)}
               className="mt-1 block w-full border border-gray-300 rounded-md shadow-sm sm:text-sm p-2"
             />
             <span className="absolute right-3 top-9">
@@ -45,47 +51,45 @@ const DustSensor = () => {
             </span>
           </div>
         </div>
-       <table className="min-w-full divide-y divide-gray-200 mb-4" style={{ borderCollapse: 'collapse' }}>
-  <thead className="bg-gray-50">
-    <tr>
-      <th className="px-6 py-3 text-xs font-bold text-gray-800 uppercase tracking-wider" style={{ textAlign: 'center', border: '1px solid #ccc' }}>SL.No</th>
-      <th className="px-6 py-3 text-xs font-bold text-gray-800 uppercase tracking-wider" style={{ textAlign: 'center', border: '1px solid #ccc' }}>TI SL.No</th>
-      <th className="px-6 py-3 text-xs font-bold text-gray-800 uppercase tracking-wider" style={{ textAlign: 'center', border: '1px solid #ccc' }}>Status</th>
-      <th className="px-6 py-3 text-xs font-bold text-gray-800 uppercase tracking-wider" style={{ textAlign: 'center', border: '1px solid #ccc' }}>Rejection</th>
-    </tr>
-  </thead>
-  <tbody className="bg-white divide-y divide-gray-200">
-    {tableData.map((row, index) => (
-      <tr key={row.slNo}>
-        <td className="px-6 py-4 whitespace-nowrap" style={{ border: '1px solid #ccc', textAlign: 'center' }}>{row.slNo}</td>
-        <td className="px-6 py-4 whitespace-nowrap" style={{ border: '1px solid #ccc', textAlign: 'center' }}>{row.tiSlNo}</td>
-        <td className="px-6 py-4 whitespace-nowrap" style={{ border: '1px solid #ccc', textAlign: 'center' }}>
-          <select
-            value={row.status}
-            onChange={(e) => handleStatusChange(index, e.target.value)}
-            className={`mt-1 block w-full border border-gray-300 rounded-md shadow-sm sm:text-sm p-2
-              ${row.status === 'passed' ? 'bg-green-100 text-green-700' : 'bg-red-100 text-red-700'}`}
-          >
-            <option value="passed">PASSED</option>
-            <option value="failed">FAILED</option>
-          </select>
-        </td>
-        <td className="px-6 py-4 whitespace-nowrap" style={{ border: '1px solid #ccc', textAlign: 'center' }}>
-          <select className="mt-1 block w-full border border-gray-300 rounded-md shadow-sm sm:text-sm p-2">
-            <option value=""></option>
-            <option value="yes">YES</option>
-            <option value="no">NO</option>
-          </select>
-        </td>
-      </tr>
-    ))}
-  </tbody>
-</table>
-
-         
+        <table className="min-w-full divide-y divide-gray-200 mb-4" style={{ borderCollapse: 'collapse' }}>
+          <thead className="bg-gray-50">
+            <tr>
+              <th className="px-6 py-3 text-xs font-bold text-gray-800 uppercase tracking-wider" style={{ textAlign: 'center', border: '1px solid #ccc' }}>SL.No</th>
+              <th className="px-6 py-3 text-xs font-bold text-gray-800 uppercase tracking-wider" style={{ textAlign: 'center', border: '1px solid #ccc' }}>TI SL.No</th>
+              <th className="px-6 py-3 text-xs font-bold text-gray-800 uppercase tracking-wider" style={{ textAlign: 'center', border: '1px solid #ccc' }}>Status</th>
+              <th className="px-6 py-3 text-xs font-bold text-gray-800 uppercase tracking-wider" style={{ textAlign: 'center', border: '1px solid #ccc' }}>Rejection</th>
+            </tr>
+          </thead>
+          <tbody className="bg-white divide-y divide-gray-200">
+            {filteredData.map((row, index) => (
+              <tr key={row.slNo}>
+                <td className="px-6 py-4 whitespace-nowrap" style={{ border: '1px solid #ccc', textAlign: 'center' }}>{row.slNo}</td>
+                <td className="px-6 py-4 whitespace-nowrap" style={{ border: '1px solid #ccc', textAlign: 'center' }}>{row.tiSlNo}</td>
+                <td className="px-6 py-4 whitespace-nowrap" style={{ border: '1px solid #ccc', textAlign: 'center' }}>
+                  <select
+                    value={row.status}
+                    onChange={(e) => handleStatusChange(index, e.target.value)}
+                    className={`mt-1 block w-full border border-gray-300 rounded-md shadow-sm sm:text-sm p-2
+                      ${row.status === 'passed' ? 'bg-green-100 text-green-700' : 'bg-red-100 text-red-700'}`}
+                  >
+                    <option value="passed">PASSED</option>
+                    <option value="failed">FAILED</option>
+                  </select>
+                </td>
+                <td className="px-6 py-4 whitespace-nowrap" style={{ border: '1px solid #ccc', textAlign: 'center' }}>
+                  <select className="mt-1 block w-full border border-gray-300 rounded-md shadow-sm sm:text-sm p-2">
+                    <option value=""></option>
+                    <option value="yes">YES</option>
+                    <option value="no">NO</option>
+                  </select>
+                </td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
         <div className="flex items-end justify-between mt-4">
           <div className="mb-4">
-            <label htmlFor="cleared-dust" className="block text-sm  text-orange-600 font-semibold text-center">Who cleared Dust</label>
+            <label htmlFor="cleared-dust" className="block text-sm text-orange-600 font-semibold text-center">Who cleared Dust</label>
             <select
               id="cleared-dust"
               value={clearedDust}
@@ -99,11 +103,9 @@ const DustSensor = () => {
               <option value="person3">Person 3</option>
             </select>
           </div>
-         <button className="bg-green-500 text-white px-4 py-2 rounded-md shadow-sm hover:bg-green-600 mb-4">
-  SAVE
-</button>
-
-
+          <button className="bg-green-500 text-white px-4 py-2 rounded-md shadow-sm hover:bg-green-600 mb-4">
+            SAVE
+          </button>
         </div>
       </div>
     </div>
