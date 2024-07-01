@@ -71,7 +71,6 @@ const NewAssembledDetector = ({ userData }) => {
   const autoShiftFocus = (index, field) => {
     const nextRowIndex = index + 1;
 
-    // Check if the next row exists
     if (nextRowIndex < rows.length) {
       const nextInput = document.querySelector(
         `#row-${nextRowIndex} input[name="${field}"]`
@@ -80,7 +79,6 @@ const NewAssembledDetector = ({ userData }) => {
         nextInput.focus();
       }
     } else {
-      // Add new row if at the end
       addNewRow(() => {
         const newInput = document.querySelector(
           `#row-${nextRowIndex} input[name="${field}"]`
@@ -93,8 +91,8 @@ const NewAssembledDetector = ({ userData }) => {
   };
 
   const addNewRow = (callback) => {
-    setRows([
-      ...rows,
+    setRows((prevRows) => [
+      ...prevRows,
       {
         tonboSlNo: "",
         sensorSlNo: "",
@@ -106,7 +104,10 @@ const NewAssembledDetector = ({ userData }) => {
     setUnsavedChanges(true);
     updateTotalSerialCount();
 
-    if (callback) callback();
+    // Use a timeout to ensure the new row is added to the DOM before focusing
+    setTimeout(() => {
+      if (callback) callback();
+    }, 0);
   };
 
   const deleteRow = (index) => {
