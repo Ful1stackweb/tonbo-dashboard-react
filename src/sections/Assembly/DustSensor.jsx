@@ -2,9 +2,9 @@ import React, { useState } from 'react';
 
 const DustSensor = () => {
   const [tableData, setTableData] = useState([
-    { slNo: 1, tiSlNo: 'TUV-9001234', status: 'passed', rejection: '' },
+    { slNo: 1, tiSlNo: 'TUV-9001234', status: 'failed', rejection: '' },
     { slNo: 2, tiSlNo: 'TUV-9001235', status: 'failed', rejection: '' },
-    { slNo: 3, tiSlNo: 'TUV-9001236', status: 'passed', rejection: '' },
+    { slNo: 3, tiSlNo: 'TUV-9001236', status: 'failed', rejection: '' },
     { slNo: 4, tiSlNo: 'TUV-9001237', status: 'failed', rejection: '' },
   ]);
   const [clearedDust, setClearedDust] = useState('');

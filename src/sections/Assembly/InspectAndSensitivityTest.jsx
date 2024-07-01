@@ -207,7 +207,7 @@ const InspectAndSensitivityTest = () => {
               </th>
               <th className="border py-2 px-4">TI SL.No</th>
               <th className="border py-2 px-4">Status</th>
-              <th className="border py-2 px-4">Sensitivity Check List</th>
+              <th className="border py-2 px-4">Inspection Check List</th>
             </tr>
           </thead>
           <tbody>
