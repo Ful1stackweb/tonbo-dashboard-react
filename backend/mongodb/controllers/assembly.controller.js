@@ -58,10 +58,88 @@ const deleteAssembly = async (req, res) => {
   }
 };
 
+const getAssembliesByDateRange = async (req, res) => {
+  try {
+    const { startDate, endDate, sensorType } = req.query;
+
+    if (!startDate || !endDate) {
+      return res
+        .status(400)
+        .json({ error: "Please provide both startDate and endDate" });
+    }
+
+    const start = new Date(startDate);
+    const end = new Date(endDate);
+
+    const allAssemblies = await assemblymodel.find();
+
+    const filteredAssemblies = allAssemblies.filter((assembly) => {
+      const creationDate = new Date(assembly.creationDate);
+      const isWithinDateRange = creationDate >= start && creationDate <= end;
+      const matchesSensorType = sensorType
+        ? assembly.sensorType === sensorType
+        : true;
+      return isWithinDateRange && matchesSensorType;
+    });
+
+    res.status(200).json(filteredAssemblies);
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+};
+
+const getSensorWiseCount = async (req, res) => {
+  try {
+    const sensorType = req.query.sensorType;
+
+    const date = new Date();
+    const formatDate = (date) => {
+      const day = String(date.getDate()).padStart(2, "0");
+      const month = String(date.getMonth() + 1).padStart(2, "0");
+      const year = date.getFullYear();
+      return `${year}-${month}-${day}`;
+    };
+    const formattedDate = formatDate(date);
+
+    const aggregationPipeline = [
+      {
+        $match: {
+          sensorType: sensorType,
+          creationDate: formattedDate,
+        },
+      },
+      {
+        $group: {
+          _id: {
+            date: "$creationDate",
+            sensorType: "$sensorType",
+          },
+          count: { $sum: 1 },
+        },
+      },
+      {
+        $project: {
+          _id: 0,
+          date: "$_id.date",
+          sensorType: "$_id.sensorType",
+          count: 1,
+        },
+      },
+    ];
+
+    const result = await assemblymodel.aggregate(aggregationPipeline);
+    res.status(200).json(result);
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+};
+
 module.exports = {
   getAssembly,
   getAssemblyByID,
   addAssembly,
   updateAssembly,
   deleteAssembly,
+  getAssembliesByDateRange,
+  getSensorWiseCount,
 };
