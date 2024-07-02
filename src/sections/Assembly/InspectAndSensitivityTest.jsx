@@ -14,6 +14,15 @@ const InspectAndSensitivityTest = () => {
   const [filteredData, setFilteredData] = useState([]);
   const [selectAll, setSelectAll] = useState(false);
 
+  const criteriaNames = [
+    "Scratch",
+    "Spacers",
+    "Screws",
+    "Loctite",
+    "Serial Numbers",
+    "Sensitivity",
+  ];
+
   useEffect(() => {
     getAllSLNo();
   }, []);
@@ -85,22 +94,21 @@ const InspectAndSensitivityTest = () => {
   };
 
   const handleStatusChange = (index, newStatus) => {
-  const updatedFilteredData = filteredData.map((item, i) =>
-    i === index
-      ? {
-          ...item,
-          status: newStatus,
-          criteria: newStatus === "pass"
-            ? [true, true, true, true, true]
-            : newStatus === "fail"
-            ? [false, false, false, false, false]
-            : item.criteria,
-        }
-      : item
-  );
-  setFilteredData(updatedFilteredData);
-};
-
+    const updatedFilteredData = filteredData.map((item, i) =>
+      i === index
+        ? {
+            ...item,
+            status: newStatus,
+            criteria: newStatus === "pass"
+              ? Array(criteriaNames.length).fill(true)
+              : newStatus === "fail"
+              ? Array(criteriaNames.length).fill(false)
+              : item.criteria,
+          }
+        : item
+    );
+    setFilteredData(updatedFilteredData);
+  };
 
   const handleCriteriaChange = (rowIndex, criteriaIndex) => {
     const updatedFilteredData = filteredData.map((item, i) =>
@@ -166,13 +174,13 @@ const InspectAndSensitivityTest = () => {
               onChange={handleInputChange}
               style={{ width: "280px" }}
             >
-             <option value="" disabled hidden>
-                  Select Sensor Type
-                </option>
+              <option value="" disabled hidden>
+                Select Sensor Type
+              </option>
               <option value="ATTO-Custom">ATTO-Custom</option>
-                <option value="ATTO-Panhead">ATTO-Panhead</option>
-                <option value="Athena-Spartan">Athena-Spartan</option>
-                <option value="Athena-BHD">Athena-BHD</option>
+              <option value="ATTO-Panhead">ATTO-Panhead</option>
+              <option value="Athena-Spartan">Athena-Spartan</option>
+              <option value="Athena-BHD">Athena-BHD</option>
             </select>
           </div>
           <div className="form-group mt-4">
@@ -196,14 +204,14 @@ const InspectAndSensitivityTest = () => {
         <table className="table-auto w-full mt-6 border-collapse">
           <thead>
             <tr>
-              <th className="border py-2 px-4">Select All 
+              <th className="border py-2 px-4">
+                Select All
                 <input
                   type="checkbox"
-                  style={{ marginLeft: '10px' }}
+                  style={{ marginLeft: "10px" }}
                   checked={selectAll}
                   onChange={handleSelectAll}
                 />
-                
               </th>
               <th className="border py-2 px-4">TI SL.No</th>
               <th className="border py-2 px-4">Status</th>
@@ -251,18 +259,20 @@ const InspectAndSensitivityTest = () => {
 
                 <td className="border text-center py-3 px-4">
                   <div className="checklist flex flex-wrap justify-center">
-                    {Array.from({ length: 5 }).map((_, criteriaIndex) => (
-                      <label key={criteriaIndex} className="mr-2">
-                        <input
-                          type="checkbox"
-                          checked={item.criteria?.[criteriaIndex] || false}
-                          onChange={() =>
-                            handleCriteriaChange(rowIndex, criteriaIndex)
-                          }
-                        />{" "}
-                        criteria {criteriaIndex + 1}
-                      </label>
-                    ))}
+                    {Array.from({ length: criteriaNames.length }).map(
+                      (_, criteriaIndex) => (
+                        <label key={criteriaIndex} className="mr-2">
+                          <input
+                            type="checkbox"
+                            checked={item.criteria?.[criteriaIndex] || false}
+                            onChange={() =>
+                              handleCriteriaChange(rowIndex, criteriaIndex)
+                            }
+                          />{" "}
+                          {criteriaNames[criteriaIndex]}
+                        </label>
+                      )
+                    )}
                   </div>
                 </td>
               </tr>
