@@ -13,6 +13,7 @@ const InspectAndSensitivityTest = () => {
   const [data, setData] = useState([]);
   const [filteredData, setFilteredData] = useState([]);
   const [selectAll, setSelectAll] = useState(false);
+  const [statusAll, setStatusAll] = useState("");
 
   const criteriaNames = [
     "Scratch",
@@ -29,10 +30,11 @@ const InspectAndSensitivityTest = () => {
 
   useEffect(() => {
     const filtered = data.filter((item) => {
-      const matchesSensorType = item.sensorType
-        .toString()
-        .toLowerCase()
-        .includes(formData.sensorType.toLowerCase());
+      const matchesSensorType =
+        formData.sensorType === "" || formData.sensorType === "ALL" || item.sensorType
+          .toString()
+          .toLowerCase()
+          .includes(formData.sensorType.toLowerCase());
       const matchesDate = item.createdAt.includes(formData.date);
 
       const matchesSelectedTonboSlNos =
@@ -129,6 +131,24 @@ const InspectAndSensitivityTest = () => {
     setFilteredData(updatedFilteredData);
   };
 
+  const handleStatusAllChange = (newStatus) => {
+    if (newStatus === statusAll) {
+      // If the same status checkbox is clicked again, reset to default
+      newStatus = "";
+    }
+    const updatedFilteredData = filteredData.map((item) => ({
+      ...item,
+      status: newStatus,
+      criteria: newStatus === "pass"
+        ? Array(criteriaNames.length).fill(true)
+        : newStatus === "fail"
+        ? Array(criteriaNames.length).fill(false)
+        : Array(criteriaNames.length).fill(false), // Reset criteria if no status is selected
+    }));
+    setFilteredData(updatedFilteredData);
+    setStatusAll(newStatus);
+  };
+
   return (
     <div
       id="data2"
@@ -177,6 +197,7 @@ const InspectAndSensitivityTest = () => {
               <option value="" disabled hidden>
                 Select Sensor Type
               </option>
+              <option value="ALL">ALL</option>
               <option value="ATTO-Custom">ATTO-Custom</option>
               <option value="ATTO-Panhead">ATTO-Panhead</option>
               <option value="Athena-Spartan">Athena-Spartan</option>
@@ -214,7 +235,29 @@ const InspectAndSensitivityTest = () => {
                 />
               </th>
               <th className="border py-2 px-4">TI SL.No</th>
-              <th className="border py-2 px-4">Status</th>
+              <th className="border py-2 px-4">
+                Status
+                <div className="flex justify-center mt-2">
+                  <label className="mr-2">
+                    P
+                    <input
+                      type="checkbox"
+                      className="ml-1"
+                      checked={statusAll === "pass"}
+                      onChange={() => handleStatusAllChange("pass")}
+                    />
+                  </label>
+                  <label>
+                    F
+                    <input
+                      type="checkbox"
+                      className="ml-1"
+                      checked={statusAll === "fail"}
+                      onChange={() => handleStatusAllChange("fail")}
+                    />
+                  </label>
+                </div>
+              </th>
               <th className="border py-2 px-4">Inspection Check List</th>
             </tr>
           </thead>
@@ -256,7 +299,6 @@ const InspectAndSensitivityTest = () => {
                     </option>
                   </select>
                 </td>
-
                 <td className="border text-center py-3 px-4">
                   <div className="checklist flex flex-wrap justify-center">
                     {Array.from({ length: criteriaNames.length }).map(
