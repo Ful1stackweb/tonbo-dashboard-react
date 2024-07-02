@@ -1,5 +1,13 @@
 const assemblymodel = require("../models/tonboassembly.js");
 
+const date = new Date();
+const formatDate = (date) => {
+  const day = String(date.getDate()).padStart(2, "0");
+  const month = String(date.getMonth() + 1).padStart(2, "0");
+  const year = date.getFullYear();
+  return `${year}-${month}-${day}`;
+};
+
 const getAssembly = async (req, res) => {
   try {
     const fetchassembly = await assemblymodel.find({});
@@ -92,13 +100,6 @@ const getSensorWiseCount = async (req, res) => {
   try {
     const sensorType = req.query.sensorType;
 
-    const date = new Date();
-    const formatDate = (date) => {
-      const day = String(date.getDate()).padStart(2, "0");
-      const month = String(date.getMonth() + 1).padStart(2, "0");
-      const year = date.getFullYear();
-      return `${year}-${month}-${day}`;
-    };
     const formattedDate = formatDate(date);
 
     const aggregationPipeline = [
@@ -134,6 +135,20 @@ const getSensorWiseCount = async (req, res) => {
   }
 };
 
+const getAssemblyByCurrentDateType = async (req, res) => {
+  try {
+    const { sensorType } = req.query;
+    const formattedDate = formatDate(date);
+
+    const assemblies = await assemblymodel.find({
+      sensorType: sensorType,
+      creationDate: formattedDate,
+    });
+
+    res.status(200).json(assemblies);
+  } catch (error) {}
+};
+
 module.exports = {
   getAssembly,
   getAssemblyByID,
@@ -142,4 +157,5 @@ module.exports = {
   deleteAssembly,
   getAssembliesByDateRange,
   getSensorWiseCount,
+  getAssemblyByCurrentDateType,
 };

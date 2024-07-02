@@ -8,11 +8,14 @@ const {
   deleteAssembly,
   getAssembliesByDateRange,
   getSensorWiseCount,
+  getAssemblyByCurrentDateType,
 } = require("../controllers/assembly.controller.js");
 
 router.get("/getAssemblybyDateRange", getAssembliesByDateRange);
 
 router.get("/sensor/count", getSensorWiseCount);
+
+router.get("/sensor/currentDay", getAssemblyByCurrentDateType);
 
 router.get("/", getAssembly);
 
