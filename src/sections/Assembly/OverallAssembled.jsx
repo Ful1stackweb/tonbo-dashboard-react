@@ -11,6 +11,19 @@ const OverallAssembled = () => {
   const [allData, setAllData] = useState([]);
   const [uniqueItems, setUniqueItems] = useState([]);
   const [countData, setCountData] = useState([]);
+  const [countValue, setCountValue] = useState();
+
+  const fetchRangeCount = async () => {
+    try {
+      const resp = await axios.get(
+        `http://localhost:3000/api/assembly/getAssemblybyDateRange?startDate=${startDate}&endDate=${endDate}&sensorType=${typeFilter}`
+      );
+      const data = resp.data;
+      setCountValue(data.length);
+    } catch (error) {
+      console.error("Error fetching data:", error);
+    }
+  };
 
   useEffect(() => {
     const fetchData = async () => {
@@ -23,6 +36,8 @@ const OverallAssembled = () => {
     };
 
     fetchData();
+    fetchRangeCount();
+    console.log("countValue", countValue);
   }, []);
 
   useEffect(() => {
@@ -95,18 +110,6 @@ const OverallAssembled = () => {
         { header: "Date", key: "creationDate", width: 15 },
         { header: "Sensor Type", key: "sensorType", width: 20 },
         { header: "Tonbo Serial Number", key: "tonboSlNo", width: 20 },
-        { header: "Sensor Serial Number", key: "sensorSlNo", width: 20 },
-        {
-          header: "Proxy Board Serial Number",
-          key: "proxyBoardSlNo",
-          width: 20,
-        },
-        {
-          header: "Power Board Serial Number",
-          key: "powerBoardSlNo",
-          width: 20,
-        },
-        { header: "FPGA Board Serial Number", key: "fpgaBoardSlNo", width: 20 },
       ];
 
       data.forEach((row) => {
@@ -114,10 +117,6 @@ const OverallAssembled = () => {
           creationDate: row.creationDate,
           sensorType: row.sensorType,
           tonboSlNo: row.tonboSlNo,
-          sensorSlNo: row.sensorSlNo,
-          proxyBoardSlNo: row.proxyBoardSlNo,
-          powerBoardSlNo: row.powerBoardSlNo,
-          fpgaBoardSlNo: row.fpgaBoardSlNo,
         });
       });
 
@@ -126,6 +125,38 @@ const OverallAssembled = () => {
       saveAs(blob, "OverallAssembled.xlsx");
     } catch (error) {
       console.error("Error during download:", error.message);
+    }
+  };
+
+  const handleDownloadCurrentDayData = async (sensorType) => {
+    try {
+      const response = await fetch(
+        `http://localhost:3000/api/assembly/sensor/currentDay?sensorType=${sensorType}`
+      );
+      const data = await response.json();
+
+      const workbook = new ExcelJS.Workbook();
+      const worksheet = workbook.addWorksheet("Sheet1");
+
+      worksheet.columns = [
+        { header: "Date", key: "creationDate", width: 15 },
+        { header: "Sensor Type", key: "sensorType", width: 20 },
+        { header: "Tonbo Serial Number", key: "tonboSlNo", width: 20 },
+      ];
+
+      data.forEach((row) => {
+        worksheet.addRow({
+          creationDate: row.creationDate,
+          sensorType: row.sensorType,
+          tonboSlNo: row.tonboSlNo,
+        });
+      });
+
+      const buffer = await workbook.xlsx.writeBuffer();
+      const blob = new Blob([buffer], { type: "application/octet-stream" });
+      saveAs(blob, "OverallAssembledCurrentDay.xlsx");
+    } catch (error) {
+      console.error("Error downloading data:", error);
     }
   };
 
@@ -183,7 +214,9 @@ const OverallAssembled = () => {
                       </td>
                       <td className="border border-black p-2 text-center">
                         <button
-                          onClick={() => handleDownload(item)}
+                          onClick={() =>
+                            handleDownloadCurrentDayData(item[0].sensorType)
+                          }
                           className="bg-gray-200 text-gray-700 py-1 px-3 rounded"
                         >
                           <FaDownload />
