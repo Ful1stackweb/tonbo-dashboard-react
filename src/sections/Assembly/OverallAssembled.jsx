@@ -279,7 +279,7 @@ const OverallAssembled = () => {
               </thead>
               <tbody>
                 <tr>
-                  <td className="border border-black p-2 text-center">count</td>
+                  <td className="border border-black p-2 text-center">Total-count</td>
                   <td className="border border-black p-2 text-center">
                     <button
                       onClick={handleDownload}

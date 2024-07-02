@@ -1,10 +1,10 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 
 const TonboDetector = () => {
   const [serialNumber, setSerialNumber] = useState('');
   const [status] = useState([
     { name: 'Assembly', completed: true, date: '2024-06-01' }, // Example date
-    { name: 'Chamber Calibration', completed: false, date: '' },
+    { name: 'Chamber Calibration', completed: true, date: '' },
     { name: 'Post Calibration', completed: false, date: '' },
     { name: 'Testing', completed: false, date: '' },
     { name: 'Sent to Store', completed: false, date: '' }
@@ -46,17 +46,27 @@ const TonboDetector = () => {
       </div>
       <div className="flex justify-between items-center mb-6">
         {status.map((stage, index) => {
-          let circleColor = 'bg-gray-500';
+          let circleColor = 'bg-gray-500'; // Default color is gray
           let icon = null;
+
+          // Conditional logic based on stage.completed and stage.name
           if (stage.completed) {
-            circleColor = 'bg-green-500';
+            circleColor = 'bg-green-500'; // Green color if stage is completed
             icon = (
               <svg className="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M5 13l4 4L19 7"></path>
               </svg>
             );
-          } else if (stage.name === 'Chamber Calibration') {
-            circleColor = 'bg-red-500';
+          } else if (stage.name === 'Post Calibration') {
+            circleColor = 'bg-red-500'; // Red color specifically for 'Chamber Calibration'
+            icon = (
+              <svg className="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M6 18L18 6M6 6l12 12"></path>
+              </svg>
+            );
+          } else {
+            // Handle other statuses here
+            circleColor = 'bg-gray-500'; // Example default color for other statuses
             icon = (
               <svg className="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M6 18L18 6M6 6l12 12"></path>
