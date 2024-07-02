@@ -92,9 +92,9 @@ const TonboDetector = () => {
       <table className="w-full border-collapse border border-gray-300 mb-6">
         <thead>
           <tr>
-            <th className="border border-gray-300 p-2">Stage</th>
-            <th className="border border-gray-300 p-2">Date</th>
-            <th className="border border-gray-300 p-2">Details</th>
+          <th className="border border-gray-300 p-2" style={{ color: '#0f52ba' }}>Stage</th>
+          <th className="border border-gray-300 p-2" style={{ color: '#0f52ba' }}>Date</th>
+          <th className="border border-gray-300 p-2" style={{ color: '#cf352e' }}>Details</th>
           </tr>
         </thead>
         <tbody>

@@ -4,10 +4,10 @@ const Update = () => {
   const [date, setDate] = useState('');
   const [search, setSearch] = useState('');
   const [statusData, setStatusData] = useState([
-    { slNo: 1, tiSlNo: 'TUV-9001234', status: 'NOT PRODUCED' },
-    { slNo: 2, tiSlNo: 'TUV-9001234', status: 'NOT PRODUCED' },
-    { slNo: 3, tiSlNo: 'TUV-9001234', status: 'NOT PRODUCED' },
-    { slNo: 4, tiSlNo: 'TUV-9001234', status: 'NOT PRODUCED' },
+    { slNo: 1, tiSlNo: 'TUV-7518451', status: 'NOT PRODUCED' },
+    { slNo: 2, tiSlNo: 'TUV-7848489', status: 'NOT PRODUCED' },
+    { slNo: 3, tiSlNo: 'TUV-9008312', status: 'NOT PRODUCED' },
+    { slNo: 4, tiSlNo: 'TUV-9008888', status: 'NOT PRODUCED' },
     // Additional rows can be added here
   ]);
 
