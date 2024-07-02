@@ -38,7 +38,7 @@ const SideMenu = () => {
             <li className="text-[16px] text-[#78c987]">Overall Assembled</li>
           </Link>
         </ul>
-        <span className="mb-5">ODDO Status</span>
+        <span className="mb-5">ODOO Status</span>
         <ul className="text-black mb-5">
           <Link to="update">
             <li className="text-[16px] text-[#78c987] mb-2 mt-2">Update</li>

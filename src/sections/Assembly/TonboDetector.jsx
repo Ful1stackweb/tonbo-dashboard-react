@@ -3,9 +3,9 @@ import React, { useState } from 'react';
 const TonboDetector = () => {
   const [serialNumber, setSerialNumber] = useState('');
   const [status] = useState([
-    { name: 'Assembly', completed: true, date: '2024-06-01' }, // Example date
-    { name: 'Chamber Calibration', completed: true, date: '' },
-    { name: 'Post Calibration', completed: false, date: '' },
+    { name: 'Assembly', completed: true, date: '28-06-2024' }, // Example date
+    { name: 'Chamber Calibration', completed: true, date: '29-06-2024' },
+    { name: 'Post Calibration', completed: false, date: '30-06-2024' },
     { name: 'Testing', completed: false, date: '' },
     { name: 'Sent to Store', completed: false, date: '' }
   ]);
