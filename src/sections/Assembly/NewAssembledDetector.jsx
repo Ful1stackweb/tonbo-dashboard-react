@@ -170,7 +170,7 @@ const NewAssembledDetector = ({ userData }) => {
 
   return (
     <div className="data p-6">
-      <h2 className="text-2xl mb-4">New Assembled Detector</h2>
+      <h2 className="text-2xl mb-4 text-center">New Assembled Detector</h2>
       <div className="form-container bg-gray-100 p-6 rounded-lg shadow-md mx-auto w-4/5">
         <div className="row-container mb-4 flex justify-between items-center">
           <div className="total-count flex items-center bg-blue-200 p-2 rounded-full border-2 border-blue-400 text-gray-700 font-semibold shadow-lg">
@@ -257,7 +257,8 @@ const NewAssembledDetector = ({ userData }) => {
                             index,
                             "tonboSlNo",
                             e.target.value,
-                            e.nativeEvent.inputType === "insertFromPaste" || e.nativeEvent.isComposing
+                            e.nativeEvent.inputType === "insertFromPaste" ||
+                              e.nativeEvent.isComposing
                           )
                         }
                       />
@@ -273,7 +274,8 @@ const NewAssembledDetector = ({ userData }) => {
                             index,
                             "sensorSlNo",
                             e.target.value,
-                            e.nativeEvent.inputType === "insertFromPaste" || e.nativeEvent.isComposing
+                            e.nativeEvent.inputType === "insertFromPaste" ||
+                              e.nativeEvent.isComposing
                           )
                         }
                       />
@@ -289,7 +291,8 @@ const NewAssembledDetector = ({ userData }) => {
                             index,
                             "proxyBoardSlNo",
                             e.target.value,
-                            e.nativeEvent.inputType === "insertFromPaste" || e.nativeEvent.isComposing
+                            e.nativeEvent.inputType === "insertFromPaste" ||
+                              e.nativeEvent.isComposing
                           )
                         }
                       />
@@ -305,7 +308,8 @@ const NewAssembledDetector = ({ userData }) => {
                             index,
                             "powerBoardSlNo",
                             e.target.value,
-                            e.nativeEvent.inputType === "insertFromPaste" || e.nativeEvent.isComposing
+                            e.nativeEvent.inputType === "insertFromPaste" ||
+                              e.nativeEvent.isComposing
                           )
                         }
                       />
@@ -321,7 +325,8 @@ const NewAssembledDetector = ({ userData }) => {
                             index,
                             "fpgaBoardSlNo",
                             e.target.value,
-                            e.nativeEvent.inputType === "insertFromPaste" || e.nativeEvent.isComposing
+                            e.nativeEvent.inputType === "insertFromPaste" ||
+                              e.nativeEvent.isComposing
                           )
                         }
                       />

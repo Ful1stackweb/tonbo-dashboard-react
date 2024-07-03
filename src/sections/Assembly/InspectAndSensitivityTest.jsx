@@ -1,6 +1,6 @@
+import React, { useEffect, useMemo, useState } from "react";
 import axios from "axios";
 import Multiselect from "multiselect-react-dropdown";
-import React, { useEffect, useMemo, useState } from "react";
 
 const InspectAndSensitivityTest = () => {
   const [selectedTonboSlNos, setSelectedTonboSlNos] = useState([]);
@@ -29,9 +29,25 @@ const InspectAndSensitivityTest = () => {
   }, []);
 
   useEffect(() => {
+    filterData();
+  }, [data, formData, selectedTonboSlNos]);
+
+  const getAllSLNo = async () => {
+    try {
+      const response = await axios.get("http://localhost:3000/api/assembly");
+      setData(response.data);
+    } catch (error) {
+      console.error("Error fetching data:", error);
+      // Handle error (e.g., show a message to the user)
+    }
+  };
+
+  const filterData = () => {
     const filtered = data.filter((item) => {
       const matchesSensorType =
-        formData.sensorType === "" || formData.sensorType === "ALL" || item.sensorType
+        formData.sensorType === "" ||
+        formData.sensorType === "ALL" ||
+        item.sensorType
           .toString()
           .toLowerCase()
           .includes(formData.sensorType.toLowerCase());
@@ -47,16 +63,6 @@ const InspectAndSensitivityTest = () => {
     });
 
     setFilteredData(filtered);
-  }, [data, formData, selectedTonboSlNos]);
-
-  const getAllSLNo = async () => {
-    try {
-      const response = await axios.get("http://localhost:3000/api/assembly");
-      setData(response.data);
-    } catch (error) {
-      console.error("Error fetching data:", error);
-      // Handle error (e.g., show a message to the user)
-    }
   };
 
   const handleInputChange = (e) => {
@@ -86,104 +92,88 @@ const InspectAndSensitivityTest = () => {
   };
 
   const handleRowSelection = (index) => {
-    const updatedFilteredData = filteredData.map((item, i) =>
-      i === index ? { ...item, selected: !item.selected } : item
-    );
+    const updatedFilteredData = [...filteredData];
+    updatedFilteredData[index].selected = !updatedFilteredData[index].selected;
     setFilteredData(updatedFilteredData);
-    if (!updatedFilteredData.every((item) => item.selected)) {
-      setSelectAll(false);
-    }
+    setSelectAll(
+      updatedFilteredData.every((item) => item.selected) &&
+        updatedFilteredData.length > 0
+    );
   };
 
   const handleStatusChange = (index, newStatus) => {
-    const updatedFilteredData = filteredData.map((item, i) =>
-      i === index
-        ? {
-            ...item,
-            status: newStatus,
-            criteria: newStatus === "pass"
-              ? Array(criteriaNames.length).fill(true)
-              : newStatus === "fail"
-              ? Array(criteriaNames.length).fill(false)
-              : item.criteria,
-          }
-        : item
-    );
+    const updatedFilteredData = [...filteredData];
+    updatedFilteredData[index].status = newStatus;
+    if (newStatus === "pass") {
+      updatedFilteredData[index].criteria = Array(criteriaNames.length).fill(
+        true
+      );
+    } else if (newStatus === "fail") {
+      updatedFilteredData[index].criteria = Array(criteriaNames.length).fill(
+        false
+      );
+    }
     setFilteredData(updatedFilteredData);
   };
 
   const handleCriteriaChange = (rowIndex, criteriaIndex) => {
-    const updatedFilteredData = filteredData.map((item, i) =>
-      i === rowIndex
-        ? {
-            ...item,
-            criteria: item.criteria.map((checked, j) =>
-              j === criteriaIndex ? !checked : checked
-            ),
-            status: item.criteria.every((checked, j) =>
-              j === criteriaIndex ? !checked : checked
-            )
-              ? "pass"
-              : "fail",
-          }
-        : item
-    );
+    const updatedFilteredData = [...filteredData];
+    updatedFilteredData[rowIndex].criteria[criteriaIndex] = !updatedFilteredData[
+      rowIndex
+    ].criteria[criteriaIndex];
+    updatedFilteredData[rowIndex].status = updatedFilteredData[
+      rowIndex
+    ].criteria.every((checked, j) =>
+      j === criteriaIndex ? !checked : checked
+    )
+      ? "pass"
+      : "fail";
     setFilteredData(updatedFilteredData);
   };
 
   const handleStatusAllChange = (newStatus) => {
-    if (newStatus === statusAll) {
-      // If the same status checkbox is clicked again, reset to default
-      newStatus = "";
-    }
     const updatedFilteredData = filteredData.map((item) => ({
       ...item,
       status: newStatus,
-      criteria: newStatus === "pass"
-        ? Array(criteriaNames.length).fill(true)
-        : newStatus === "fail"
-        ? Array(criteriaNames.length).fill(false)
-        : Array(criteriaNames.length).fill(false), // Reset criteria if no status is selected
+      criteria:
+        newStatus === "pass"
+          ? Array(criteriaNames.length).fill(true)
+          : newStatus === "fail"
+          ? Array(criteriaNames.length).fill(false)
+          : Array(criteriaNames.length).fill(false), // Reset criteria if no status is selected
     }));
     setFilteredData(updatedFilteredData);
     setStatusAll(newStatus);
   };
 
+  const saveData = () => {
+    // Implement your save logic here
+    console.log("Saving data:", filteredData);
+  };
+
   return (
-    <div
-      id="data2"
-      className="p-4 bg-gray-100 mx-auto"
-      style={{ width: "1200px" }}
-    >
+    <div className="p-4 bg-gray-100 mx-auto" style={{ maxWidth: "1200px" }}>
       <h2 className="text-2xl font-bold mb-4 text-center">
         Inspect & Sensitivity Test
       </h2>
       <div className="container mx-auto bg-white p-6 rounded-lg shadow-lg">
-        <div>
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-            <div className="form-group">
-              <label
-                htmlFor="date"
-                className="block text-orange-600 font-semibold"
-              >
-                Date
-              </label>
-              <input
-                type="date"
-                id="date"
-                name="date"
-                className="form-control mt-1 block border-2 border-gray-400 rounded-md h-10"
-                value={formData.date}
-                onChange={handleInputChange}
-                style={{ width: "280px" }}
-              />
-            </div>
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+          <div className="form-group">
+            <label htmlFor="date" className="block text-orange-600 font-semibold">
+              Date
+            </label>
+            <input
+              type="date"
+              id="date"
+              name="date"
+              className="form-control mt-1 block border-2 border-gray-400 rounded-md h-10"
+              value={formData.date}
+              onChange={handleInputChange}
+              style={{ width: "280px" }}
+            />
           </div>
-          <div className="form-group mt-4">
-            <label
-              htmlFor="sensorType"
-              className="block text-orange-600 font-semibold"
-            >
+          <div className="form-group">
+            <label htmlFor="sensorType" className="block text-orange-600 font-semibold">
               Type of Sensor
             </label>
             <select
@@ -194,9 +184,7 @@ const InspectAndSensitivityTest = () => {
               onChange={handleInputChange}
               style={{ width: "280px" }}
             >
-              <option value="" disabled hidden>
-                Select Sensor Type
-              </option>
+              <option value="">Select Sensor Type</option>
               <option value="ALL">ALL</option>
               <option value="ATTO-Custom">ATTO-Custom</option>
               <option value="ATTO-Panhead">ATTO-Panhead</option>
@@ -204,22 +192,19 @@ const InspectAndSensitivityTest = () => {
               <option value="Athena-BHD">Athena-BHD</option>
             </select>
           </div>
-          <div className="form-group mt-4">
-            <label
-              htmlFor="searchSLNo"
-              className="block text-center text-orange-600 font-semibold"
-            >
-              Search SL.No
-            </label>
-            <div className="relative flex justify-center">
-              <Multiselect
-                options={options}
-                displayValue="tonboSlNo"
-                selectedValues={selectedTonboSlNos}
-                onSelect={handleSelect}
-                onRemove={handleSelect}
-              />
-            </div>
+        </div>
+        <div className="form-group mt-4">
+          <label htmlFor="searchSLNo" className="block text-center text-orange-600 font-semibold">
+            Search SL.No
+          </label>
+          <div className="relative flex justify-center">
+            <Multiselect
+              options={options}
+              displayValue="tonboSlNo"
+              selectedValues={selectedTonboSlNos}
+              onSelect={handleSelect}
+              onRemove={handleSelect}
+            />
           </div>
         </div>
         <table className="table-auto w-full mt-6 border-collapse">
@@ -271,59 +256,47 @@ const InspectAndSensitivityTest = () => {
                     onChange={() => handleRowSelection(rowIndex)}
                   />
                 </td>
-                <td className="border text-center py-3 px-4">
-                  {item.tonboSlNo}
-                </td>
+                <td className="border text-center py-3 px-4">{item.tonboSlNo}</td>
                 <td className="border text-center py-3 px-4">
                   <select
-                    className="status-dropdown mt-1 block w-full border-gray-300 rounded-md shadow-sm"
+                    className={`status-dropdown mt-1 block w-full border-gray-300 rounded-md shadow-sm ${
+                      item.status === "pass" ? "bg-green-100" : item.status === "fail" ? "bg-red-100" : ""
+                    }`}
                     value={item.status || ""}
-                    onChange={(e) =>
-                      handleStatusChange(rowIndex, e.target.value)
-                    }
+                    onChange={(e) => handleStatusChange(rowIndex, e.target.value)}
                   >
                     <option value="">Select</option>
-                    <option
-                      value="pass"
-                      className="status-pass"
-                      style={{ color: "#047857", backgroundColor: "#D1FAE5" }}
-                    >
+                    <option value="pass" className="status-pass">
                       Pass
                     </option>
-                    <option
-                      value="fail"
-                      className="status-fail"
-                      style={{ color: "#B91C1C", backgroundColor: "#FEE2E2" }}
-                    >
+                    <option value="fail" className="status-fail">
                       Fail
                     </option>
                   </select>
                 </td>
                 <td className="border text-center py-3 px-4">
                   <div className="checklist flex flex-wrap justify-center">
-                    {Array.from({ length: criteriaNames.length }).map(
-                      (_, criteriaIndex) => (
-                        <label key={criteriaIndex} className="mr-2">
-                          <input
-                            type="checkbox"
-                            checked={item.criteria?.[criteriaIndex] || false}
-                            onChange={() =>
-                              handleCriteriaChange(rowIndex, criteriaIndex)
-                            }
-                          />{" "}
-                          {criteriaNames[criteriaIndex]}
-                        </label>
-                      )
-                    )}
+                    {criteriaNames.map((criteriaName, criteriaIndex) => (
+                      <label key={criteriaIndex} className="mr-2">
+                        <input
+                          type="checkbox"
+                          checked={item.criteria?.[criteriaIndex] || false}
+                          onChange={() => handleCriteriaChange(rowIndex, criteriaIndex)}
+                        />{" "}
+                        {criteriaName}
+                      </label>
+                    ))}
                   </div>
                 </td>
               </tr>
             ))}
           </tbody>
         </table>
-
         <div className="footer flex justify-end mt-6">
-          <button className="save-button bg-green-500 text-white py-2 px-4 rounded-md shadow-sm hover:bg-green-600">
+          <button
+            className="save-button bg-green-500 text-white py-2 px-4 rounded-md shadow-sm hover:bg-green-600"
+            onClick={saveData}
+          >
             SAVE
           </button>
         </div>

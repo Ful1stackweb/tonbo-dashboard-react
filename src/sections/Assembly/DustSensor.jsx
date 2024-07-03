@@ -20,24 +20,20 @@ const DustSensor = () => {
   );
 
   return (
-    <div style={{ width: '1200px' }} className="p-6 bg-gray-100 min-h-screen">
-      <h1 className="text-3xl font-bold text-center mb-6">Dust Sensor Module</h1>
-      <div className="container mx-auto p-4 bg-white rounded shadow">
-        <div className="mb-4 text-right">
-          <span className="text-sm font-semibold">Sensor Count: {filteredData.length}</span>
-        </div>
-        <div className="mb-4">
-          <label htmlFor="date" className="block text-sm text-orange-600 font-semibold pl-28">Date</label>
-          <input
-            style={{ width: '280px' }}
-            type="date"
-            id="date"
-            name="date"
-            className="mt-1 block w-full border border-gray-300 rounded-md shadow-sm sm:text-sm p-2"
-          />
-        </div>
-        <div className="flex items-center justify-center mb-4">
-          <div style={{ width: '350px' }} className="relative w-1/2">
+    <div className="flex items-center justify-center min-h-screen bg-gray-100">
+      <div className="w-full max-w-4xl p-6 bg-white rounded shadow">
+        <h1 className="text-3xl font-bold text-center mb-6">Dust Sensor Module</h1>
+        <div className="mb-4 flex justify-center">
+          <div style={{ width: '280px', marginRight: '20px' }}>
+            <label htmlFor="date" className="block text-sm text-orange-600 font-semibold">Date</label>
+            <input
+              type="date"
+              id="date"
+              name="date"
+              className="mt-1 block w-full border border-gray-300 rounded-md shadow-sm sm:text-sm p-2"
+            />
+          </div>
+          <div style={{ width: '350px' }} className="relative">
             <label htmlFor="search-sl-no" className="block text-sm text-orange-600 font-semibold text-center">Search SL.No</label>
             <input
               type="text"
@@ -54,18 +50,18 @@ const DustSensor = () => {
         <table className="min-w-full divide-y divide-gray-200 mb-4" style={{ borderCollapse: 'collapse' }}>
           <thead className="bg-gray-50">
             <tr>
-              <th className="px-6 py-3 text-xs font-bold text-gray-800 uppercase tracking-wider" style={{ textAlign: 'center', border: '1px solid #ccc' }}>SL.No</th>
-              <th className="px-6 py-3 text-xs font-bold text-gray-800 uppercase tracking-wider" style={{ textAlign: 'center', border: '1px solid #ccc' }}>TI SL.No</th>
-              <th className="px-6 py-3 text-xs font-bold text-gray-800 uppercase tracking-wider" style={{ textAlign: 'center', border: '1px solid #ccc' }}>Status</th>
-              <th className="px-6 py-3 text-xs font-bold text-gray-800 uppercase tracking-wider" style={{ textAlign: 'center', border: '1px solid #ccc' }}>Rejection</th>
+              <th className="px-6 py-3 text-xs font-bold text-gray-800 uppercase tracking-wider text-center" style={{ border: '1px solid #ccc', width: '25%' }}>SL.No</th>
+              <th className="px-6 py-3 text-xs font-bold text-gray-800 uppercase tracking-wider text-center" style={{ border: '1px solid #ccc', width: '25%' }}>TI SL.No</th>
+              <th className="px-6 py-3 text-xs font-bold text-gray-800 uppercase tracking-wider text-center" style={{ border: '1px solid #ccc', width: '25%' }}>Status</th>
+              <th className="px-6 py-3 text-xs font-bold text-gray-800 uppercase tracking-wider text-center" style={{ border: '1px solid #ccc', width: '25%' }}>Rejection</th>
             </tr>
           </thead>
           <tbody className="bg-white divide-y divide-gray-200">
             {filteredData.map((row, index) => (
               <tr key={row.slNo}>
-                <td className="px-6 py-4 whitespace-nowrap" style={{ border: '1px solid #ccc', textAlign: 'center' }}>{row.slNo}</td>
-                <td className="px-6 py-4 whitespace-nowrap" style={{ border: '1px solid #ccc', textAlign: 'center' }}>{row.tiSlNo}</td>
-                <td className="px-6 py-4 whitespace-nowrap" style={{ border: '1px solid #ccc', textAlign: 'center' }}>
+                <td className="px-6 py-4 whitespace-nowrap text-center" style={{ border: '1px solid #ccc' }}>{row.slNo}</td>
+                <td className="px-6 py-4 whitespace-nowrap text-center" style={{ border: '1px solid #ccc' }}>{row.tiSlNo}</td>
+                <td className="px-6 py-4 whitespace-nowrap text-center" style={{ border: '1px solid #ccc' }}>
                   <select
                     value={row.status}
                     onChange={(e) => handleStatusChange(index, e.target.value)}
@@ -76,7 +72,7 @@ const DustSensor = () => {
                     <option value="failed">FAILED</option>
                   </select>
                 </td>
-                <td className="px-6 py-4 whitespace-nowrap" style={{ border: '1px solid #ccc', textAlign: 'center' }}>
+                <td className="px-6 py-4 whitespace-nowrap text-center" style={{ border: '1px solid #ccc' }}>
                   <select className="mt-1 block w-full border border-gray-300 rounded-md shadow-sm sm:text-sm p-2">
                     <option value=""></option>
                     <option value="yes">YES</option>
@@ -88,14 +84,13 @@ const DustSensor = () => {
           </tbody>
         </table>
         <div className="flex items-end justify-between mt-4">
-          <div className="mb-4">
+          <div className="w-1/2">
             <label htmlFor="cleared-dust" className="block text-sm text-orange-600 font-semibold text-center">Who cleared Dust</label>
             <select
               id="cleared-dust"
               value={clearedDust}
               onChange={(e) => setClearedDust(e.target.value)}
               className="mt-1 block w-full border border-gray-300 rounded-md shadow-sm sm:text-sm p-2"
-              style={{ width: '200px' }} 
             >
               <option value="">Select</option>
               <option value="person1">Person 1</option>
@@ -103,7 +98,7 @@ const DustSensor = () => {
               <option value="person3">Person 3</option>
             </select>
           </div>
-          <button className="bg-green-500 text-white px-4 py-2 rounded-md shadow-sm hover:bg-green-600 mb-4">
+          <button className="bg-green-500 text-white px-4 py-2 rounded-md shadow-sm hover:bg-green-600">
             SAVE
           </button>
         </div>
