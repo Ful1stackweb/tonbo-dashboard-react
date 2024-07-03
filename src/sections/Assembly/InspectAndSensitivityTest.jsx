@@ -132,18 +132,26 @@ const InspectAndSensitivityTest = () => {
   };
 
   const handleStatusAllChange = (newStatus) => {
-    const updatedFilteredData = filteredData.map((item) => ({
-      ...item,
-      status: newStatus,
-      criteria:
-        newStatus === "pass"
-          ? Array(criteriaNames.length).fill(true)
-          : newStatus === "fail"
-          ? Array(criteriaNames.length).fill(false)
-          : Array(criteriaNames.length).fill(false), // Reset criteria if no status is selected
-    }));
-    setFilteredData(updatedFilteredData);
-    setStatusAll(newStatus);
+    if (statusAll === newStatus) {
+      const updatedFilteredData = filteredData.map((item) => ({
+        ...item,
+        status: "",
+        criteria: Array(criteriaNames.length).fill(false),
+      }));
+      setFilteredData(updatedFilteredData);
+      setStatusAll("");
+    } else {
+      const updatedFilteredData = filteredData.map((item) => ({
+        ...item,
+        status: newStatus,
+        criteria:
+          newStatus === "pass"
+            ? Array(criteriaNames.length).fill(true)
+            : Array(criteriaNames.length).fill(false),
+      }));
+      setFilteredData(updatedFilteredData);
+      setStatusAll(newStatus);
+    }
   };
 
   const saveData = () => {

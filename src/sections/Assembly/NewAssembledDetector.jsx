@@ -38,8 +38,8 @@ const NewAssembledDetector = ({ userData }) => {
     };
   }, [unsavedChanges, userData.userId]);
 
-  const updateTotalSerialCount = () => {
-    const filledRows = rows.filter((row) => row.tonboSlNo.trim() !== "");
+  const updateTotalSerialCount = (rowsToUpdate = rows) => {
+    const filledRows = rowsToUpdate.filter((row) => row.tonboSlNo.trim() !== "");
     setTotalSerialCount(filledRows.length);
   };
 
@@ -116,7 +116,7 @@ const NewAssembledDetector = ({ userData }) => {
       newRows.splice(index, 1);
       setRows(newRows);
       setUnsavedChanges(true);
-      updateTotalSerialCount();
+      updateTotalSerialCount(newRows);
     }
   };
 
