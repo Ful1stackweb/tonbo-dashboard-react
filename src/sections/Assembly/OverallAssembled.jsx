@@ -13,7 +13,10 @@ const OverallAssembled = () => {
   const [countData, setCountData] = useState([]);
   const [countValue, setCountValue] = useState();
 
-  const fetchRangeCount = async () => {
+  const fetchDateWiseRangeCount = async () => {
+    if (endDate === "") {
+      return;
+    }
     try {
       const resp = await axios.get(
         `http://localhost:3000/api/assembly/getAssemblybyDateRange?startDate=${startDate}&endDate=${endDate}&sensorType=${typeFilter}`
@@ -26,6 +29,11 @@ const OverallAssembled = () => {
   };
 
   useEffect(() => {
+    if (new Date(startDate) > new Date(endDate)) {
+      alert("Invalid selected date range");
+      return;
+    }
+
     const fetchData = async () => {
       try {
         const response = await axios.get("http://localhost:3000/api/assembly/");
@@ -36,9 +44,8 @@ const OverallAssembled = () => {
     };
 
     fetchData();
-    fetchRangeCount();
-    console.log("countValue", countValue);
-  }, []);
+    fetchDateWiseRangeCount();
+  }, [endDate, startDate, typeFilter]);
 
   useEffect(() => {
     if (allData.length > 0) {
@@ -279,7 +286,9 @@ const OverallAssembled = () => {
               </thead>
               <tbody>
                 <tr>
-                  <td className="border border-black p-2 text-center">Total-count</td>
+                  <td className="border border-black p-2 text-center">
+                    {countValue || 0}
+                  </td>
                   <td className="border border-black p-2 text-center">
                     <button
                       onClick={handleDownload}
