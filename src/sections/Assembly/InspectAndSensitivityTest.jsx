@@ -118,13 +118,13 @@ const InspectAndSensitivityTest = () => {
 
   const handleCriteriaChange = (rowIndex, criteriaIndex) => {
     const updatedFilteredData = [...filteredData];
+    // Toggle the specific criterion
     updatedFilteredData[rowIndex].criteria[criteriaIndex] = !updatedFilteredData[
       rowIndex
     ].criteria[criteriaIndex];
-    updatedFilteredData[rowIndex].status = updatedFilteredData[
-      rowIndex
-    ].criteria.every((checked, j) =>
-      j === criteriaIndex ? !checked : checked
+    // Update the status based on all criteria
+    updatedFilteredData[rowIndex].status = updatedFilteredData[rowIndex].criteria.every(
+      (checked) => checked
     )
       ? "pass"
       : "fail";
