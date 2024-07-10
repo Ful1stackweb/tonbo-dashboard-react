@@ -27,7 +27,13 @@ const tonboAssemblySchema = new mongoose.Schema(
       type: String,
       required: true,
     },
-
+    criteria: {
+      type: [Boolean],
+    },
+    status: {
+      type: String,
+      default: "none",
+    },
     userId: {
       type: String,
       required: true,

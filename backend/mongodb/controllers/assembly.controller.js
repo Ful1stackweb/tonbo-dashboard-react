@@ -10,7 +10,18 @@ const formatDate = (date) => {
 
 const getAssembly = async (req, res) => {
   try {
-    const fetchassembly = await assemblymodel.find({});
+    const { status } = "none";
+    const fetchassembly = await assemblymodel.find({ status });
+    res.status(200).json(fetchassembly);
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+};
+
+const getAssemblyFailStatus = async (req, res) => {
+  try {
+    const { status } = req.params;
+    const fetchassembly = await assemblymodel.find({ status });
     res.status(200).json(fetchassembly);
   } catch (error) {
     res.status(500).json({ message: error.message });
@@ -39,14 +50,19 @@ const addAssembly = async (req, res) => {
 
 const updateAssembly = async (req, res) => {
   try {
-    const { id } = req.params;
+    const { tonboSlNo } = req.params;
     const update = req.body;
-    const assembly = await assemblymodel.findByIdAndUpdate(id, update);
-    if (!assembly) {
+
+    const updatedAssembly = await assemblymodel.findOneAndUpdate(
+      { tonboSlNo },
+      update,
+      { new: true }
+    );
+
+    if (!updatedAssembly) {
       return res.status(404).json({ message: "Assembly not found" });
     }
 
-    const updatedAssembly = await assemblymodel.findById(id);
     res.status(200).json(updatedAssembly);
   } catch (error) {
     res.status(500).json({ message: error.message });
@@ -146,11 +162,14 @@ const getAssemblyByCurrentDateType = async (req, res) => {
     });
 
     res.status(200).json(assemblies);
-  } catch (error) {}
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
 };
 
 module.exports = {
   getAssembly,
+  getAssemblyFailStatus,
   getAssemblyByID,
   addAssembly,
   updateAssembly,

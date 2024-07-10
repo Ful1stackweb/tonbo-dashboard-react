@@ -2,6 +2,7 @@ const express = require("express");
 const router = express.Router();
 const {
   getAssembly,
+  getAssemblyFailStatus,
   getAssemblyByID,
   addAssembly,
   updateAssembly,
@@ -19,11 +20,13 @@ router.get("/sensor/currentDay", getAssemblyByCurrentDateType);
 
 router.get("/", getAssembly);
 
+router.get("/:status", getAssemblyFailStatus);
+
 router.get("/:id", getAssemblyByID);
 
 router.post("/", addAssembly);
 
-router.put("/:id", updateAssembly);
+router.put("/:tonboSlNo", updateAssembly);
 
 router.delete("/:id", deleteAssembly);
 

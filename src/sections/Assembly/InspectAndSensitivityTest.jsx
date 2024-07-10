@@ -119,13 +119,12 @@ const InspectAndSensitivityTest = () => {
   const handleCriteriaChange = (rowIndex, criteriaIndex) => {
     const updatedFilteredData = [...filteredData];
     // Toggle the specific criterion
-    updatedFilteredData[rowIndex].criteria[criteriaIndex] = !updatedFilteredData[
-      rowIndex
-    ].criteria[criteriaIndex];
+    updatedFilteredData[rowIndex].criteria[criteriaIndex] =
+      !updatedFilteredData[rowIndex].criteria[criteriaIndex];
     // Update the status based on all criteria
-    updatedFilteredData[rowIndex].status = updatedFilteredData[rowIndex].criteria.every(
-      (checked) => checked
-    )
+    updatedFilteredData[rowIndex].status = updatedFilteredData[
+      rowIndex
+    ].criteria.every((checked) => checked)
       ? "pass"
       : "fail";
     setFilteredData(updatedFilteredData);
@@ -154,9 +153,23 @@ const InspectAndSensitivityTest = () => {
     }
   };
 
-  const saveData = () => {
-    // Implement your save logic here
-    console.log("Saving data:", filteredData);
+  const saveData = async () => {
+    for (let i = 0; i < filteredData.length; i++) {
+      if (
+        filteredData[i].status === "fail" ||
+        filteredData[i].status === "pass"
+      ) {
+        const dataToSend = {
+          criteria: filteredData[i].criteria,
+          status: filteredData[i].status,
+        };
+        const response = await axios.put(
+          `http://localhost:3000/api/assembly/${filteredData[i].tonboSlNo}`,
+          dataToSend
+        );
+        console.log("Data for " + response.data + " Saved!");
+      }
+    }
   };
 
   return (
@@ -167,7 +180,10 @@ const InspectAndSensitivityTest = () => {
       <div className="container mx-auto bg-white p-6 rounded-lg shadow-lg">
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
           <div className="form-group">
-            <label htmlFor="date" className="block text-orange-600 font-semibold">
+            <label
+              htmlFor="date"
+              className="block text-orange-600 font-semibold"
+            >
               Date
             </label>
             <input
@@ -181,7 +197,10 @@ const InspectAndSensitivityTest = () => {
             />
           </div>
           <div className="form-group">
-            <label htmlFor="sensorType" className="block text-orange-600 font-semibold">
+            <label
+              htmlFor="sensorType"
+              className="block text-orange-600 font-semibold"
+            >
               Type of Sensor
             </label>
             <select
@@ -202,7 +221,10 @@ const InspectAndSensitivityTest = () => {
           </div>
         </div>
         <div className="form-group mt-4">
-          <label htmlFor="searchSLNo" className="block text-center text-orange-600 font-semibold">
+          <label
+            htmlFor="searchSLNo"
+            className="block text-center text-orange-600 font-semibold"
+          >
             Search SL.No
           </label>
           <div className="relative flex justify-center">
@@ -264,14 +286,22 @@ const InspectAndSensitivityTest = () => {
                     onChange={() => handleRowSelection(rowIndex)}
                   />
                 </td>
-                <td className="border text-center py-3 px-4">{item.tonboSlNo}</td>
+                <td className="border text-center py-3 px-4">
+                  {item.tonboSlNo}
+                </td>
                 <td className="border text-center py-3 px-4">
                   <select
                     className={`status-dropdown mt-1 block w-full border-gray-300 rounded-md shadow-sm ${
-                      item.status === "pass" ? "bg-green-100" : item.status === "fail" ? "bg-red-100" : ""
+                      item.status === "pass"
+                        ? "bg-green-100"
+                        : item.status === "fail"
+                        ? "bg-red-100"
+                        : ""
                     }`}
                     value={item.status || ""}
-                    onChange={(e) => handleStatusChange(rowIndex, e.target.value)}
+                    onChange={(e) =>
+                      handleStatusChange(rowIndex, e.target.value)
+                    }
                   >
                     <option value="">Select</option>
                     <option value="pass" className="status-pass">
@@ -289,7 +319,9 @@ const InspectAndSensitivityTest = () => {
                         <input
                           type="checkbox"
                           checked={item.criteria?.[criteriaIndex] || false}
-                          onChange={() => handleCriteriaChange(rowIndex, criteriaIndex)}
+                          onChange={() =>
+                            handleCriteriaChange(rowIndex, criteriaIndex)
+                          }
                         />{" "}
                         {criteriaName}
                       </label>
