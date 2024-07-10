@@ -10,8 +10,7 @@ const formatDate = (date) => {
 
 const getAssembly = async (req, res) => {
   try {
-    const { status } = "none";
-    const fetchassembly = await assemblymodel.find({ status });
+    const fetchassembly = await assemblymodel.find();
     res.status(200).json(fetchassembly);
   } catch (error) {
     res.status(500).json({ message: error.message });

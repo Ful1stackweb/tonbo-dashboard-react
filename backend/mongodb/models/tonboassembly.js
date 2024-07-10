@@ -6,18 +6,22 @@ const tonboAssemblySchema = new mongoose.Schema(
     tonboSlNo: {
       type: String,
       required: true,
+      unique: true,
     },
     sensorSlNo: {
       type: String,
       required: true,
+      unique: true,
     },
     proxyBoardSlNo: {
       type: String,
       required: true,
+      unique: true,
     },
     powerBoardSlNo: {
       type: String,
       required: true,
+      unique: true,
     },
     sensorType: {
       type: String,
@@ -26,6 +30,7 @@ const tonboAssemblySchema = new mongoose.Schema(
     fpgaBoardSlNo: {
       type: String,
       required: true,
+      unique: true,
     },
     criteria: {
       type: [Boolean],

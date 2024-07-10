@@ -34,7 +34,9 @@ const InspectAndSensitivityTest = () => {
 
   const getAllSLNo = async () => {
     try {
-      const response = await axios.get("http://localhost:3000/api/assembly");
+      const response = await axios.get(
+        "http://localhost:3000/api/assembly/none"
+      );
       setData(response.data);
     } catch (error) {
       console.error("Error fetching data:", error);
