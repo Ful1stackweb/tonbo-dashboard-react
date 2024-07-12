@@ -79,28 +79,54 @@ const SensorReplacement = () => {
 
   const handleSave = () => {
     const data = {
-      tableData,
-      dropdown1,
-      dropdown2,
-      sensorCount,
-      boardCount,
+      sensorSlNo: tableData[0].newPartNo,
+      proxyBoardSlNo: tableData[1].newPartNo,
+      powerBoardSlNo: tableData[2].newPartNo,
+      fpgaBoardSlNo: tableData[3].newPartNo,
+
+      oldSerialNumbers: {
+        sensorSlNo: selectedTonboData.sensorSlNo,
+        proxyBoardSlNo: selectedTonboData.proxyBoardSlNo,
+        powerBoardSlNo: selectedTonboData.powerBoardSlNo,
+        fpgaBoardSlNo: selectedTonboData.fpgaBoardSlNo,
+      },
     };
 
-    fetch("/save-data", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify(data),
-    })
-      .then((response) => response.json())
-      .then((result) => {
-        alert("Data saved successfully!");
+    const data2 = {
+      criteria: [true, true, true, true, true, true],
+      status: "pass",
+    };
+
+    const filteredData = Object.fromEntries(
+      Object.entries(data).filter(([key, value]) => {
+        if (typeof value === "string") {
+          return value.trim() !== "";
+        } else if (typeof value === "object" && value !== null) {
+          return Object.values(value).some((v) => v.trim() !== "");
+        }
+        return true;
       })
-      .catch((error) => {
-        console.error("Error:", error);
-        alert("Failed to save data.");
-      });
+    );
+
+    if (filteredData.oldSerialNumbers) {
+      filteredData.oldSerialNumbers = Object.fromEntries(
+        Object.entries(filteredData.oldSerialNumbers).filter(
+          ([key, value]) => value.trim() !== ""
+        )
+      );
+    }
+
+    const combinedData = { ...filteredData, ...data2 };
+
+    try {
+      const response = axios.put(
+        `http://localhost:3000/api/assembly/${selectedTonboSlNos[0].tonboSlNo}`,
+        combinedData
+      );
+    } catch (error) {
+      console.log("Error: ", error);
+    }
+    console.log("Data: ", data);
   };
 
   const handleDateChange = (e) => {

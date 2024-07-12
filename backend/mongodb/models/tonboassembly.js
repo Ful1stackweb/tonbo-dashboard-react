@@ -1,6 +1,32 @@
 const { Timestamp } = require("mongodb");
 const mongoose = require("mongoose");
 
+const oldSerialNumbersSchema = new mongoose.Schema(
+  {
+    tonboSlNo: {
+      type: String,
+      default: "",
+    },
+    sensorSlNo: {
+      type: String,
+      default: "",
+    },
+    proxyBoardSlNo: {
+      type: String,
+      default: "",
+    },
+    powerBoardSlNo: {
+      type: String,
+      default: "",
+    },
+    fpgaBoardSlNo: {
+      type: String,
+      default: "",
+    },
+  },
+  { _id: false }
+);
+
 const tonboAssemblySchema = new mongoose.Schema(
   {
     tonboSlNo: {
@@ -32,6 +58,7 @@ const tonboAssemblySchema = new mongoose.Schema(
       required: true,
       unique: true,
     },
+
     criteria: {
       type: [Boolean],
     },
@@ -46,6 +73,10 @@ const tonboAssemblySchema = new mongoose.Schema(
     creationDate: {
       type: String,
       required: true,
+    },
+    oldSerialNumbers: {
+      type: oldSerialNumbersSchema,
+      default: () => ({}),
     },
   },
   {
